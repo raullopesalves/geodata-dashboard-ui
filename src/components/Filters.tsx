@@ -61,7 +61,7 @@ const Filters: React.FC<FiltersProps> = ({
         {isOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
       </button>
       {isOpen && (
-        <div className="p-4 overflow-y-auto h-full pointer-events-auto">
+        <div className="p-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
           <h2 className="text-xl font-semibold mb-4 text-white mt-8">Bird Species</h2>
           <div className="grid grid-cols-2 gap-4">
             {uniqueSpecies.map(species => (

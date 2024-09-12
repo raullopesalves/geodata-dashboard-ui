@@ -24,7 +24,7 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
 
   const aggregatedData = useMemo(() => {
     const grid: { [key: string]: DataPoint[] } = {};
-    const gridSize = 0.05; // Adjust this value to change the aggregation level
+    const gridSize = 0.1; // Adjust this value to change the aggregation level
 
     data.forEach(point => {
       const key = `${Math.floor(point.latitude / gridSize)},${Math.floor(point.longitude / gridSize)}`;
@@ -50,12 +50,12 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
   return (
     <MapContainer center={center} zoom={zoom} style={{ height: '100%', width: '100%' }}>
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://api.maptiler.com/maps/basic-v2-dark/256/{z}/{x}/{y}.png?key=***REMOVED***"
+        attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> contributors'
       />
       {aggregatedData.map((point, index) => {
         const radius = 5 + (point.totalCases / maxCases) * 20; // Scale radius between 5 and 25
-        const opacity = 0.2 + (point.totalCases / maxCases) * 0.8; // Scale opacity between 0.2 and 1
+        const opacity = 0.2 + (point.totalCases / maxCases) * 0.25; // Scale opacity between 0.2 and 0.45
         return (
           <CircleMarker
             key={index}
