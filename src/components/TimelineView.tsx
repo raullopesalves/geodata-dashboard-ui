@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -49,7 +49,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, onRangeCha
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col text-white">
       <div className="mb-4 flex justify-between items-center">
         <DatePicker
           selected={dateRange[0]}
@@ -57,6 +57,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, onRangeCha
           selectsStart
           startDate={dateRange[0]}
           endDate={dateRange[1]}
+          className="bg-gray-800 text-white border border-gray-700 rounded p-2"
         />
         <DatePicker
           selected={dateRange[1]}
@@ -65,15 +66,20 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, onRangeCha
           startDate={dateRange[0]}
           endDate={dateRange[1]}
           minDate={dateRange[0]}
+          className="bg-gray-800 text-white border border-gray-700 rounded p-2"
         />
       </div>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={aggregatedData}>
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="totalCases" fill="#8884d8" />
-        </BarChart>
+        <LineChart data={aggregatedData}>
+          <XAxis dataKey="date" stroke="#fff" />
+          <YAxis stroke="#fff" />
+          <Tooltip 
+            contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', border: 'none', borderRadius: '4px' }}
+            labelStyle={{ color: '#fff' }}
+            itemStyle={{ color: '#fff' }}
+          />
+          <Line type="monotone" dataKey="totalCases" stroke="#8884d8" strokeWidth={2} dot={false} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );

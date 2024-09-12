@@ -12,7 +12,6 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isTimelineOpen, setIsTimelineOpen] = useState(true);
   const [dateRange, setDateRange] = useState<[Date, Date]>([new Date(), new Date()]);
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
 
   useEffect(() => {
@@ -44,41 +43,37 @@ const Dashboard: React.FC = () => {
     setFilteredData(filterData(data, dateRange, updatedSpecies));
   };
 
-  const uniqueSpecies = getUniqueSpecies(data);
-
   return (
-    <div className="h-full w-full relative">
+    <div className="h-full w-full relative bg-gray-900 bg-opacity-80">
       <div className="absolute inset-0 z-0">
         <GraphView data={filteredData} />
       </div>
 
       <div className="absolute inset-0 z-10 pointer-events-none">
         <Filters
-          isOpen={isFilterDrawerOpen}
-          toggleOpen={() => setIsFilterDrawerOpen(!isFilterDrawerOpen)}
           selectedSpecies={selectedSpecies}
-          uniqueSpecies={uniqueSpecies}
+          uniqueSpecies={getUniqueSpecies(data)}
           onSpeciesChange={handleSpeciesChange}
         />
 
         <DataSummary filteredData={filteredData} dateRange={dateRange} />
 
-        <div className={`absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 transition-all duration-300 ease-in-out pointer-events-auto ${isTimelineOpen ? 'h-64' : 'h-8'}`}>
+        <div className={`absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-80 transition-all duration-300 ease-in-out pointer-events-auto z-20 ${isTimelineOpen ? 'h-64' : 'h-12'}`}>
           <button 
-            className="w-full h-8 bg-gray-200 flex justify-center items-center"
+            className="w-full h-12 bg-gray-800 flex justify-center items-center text-white"
             onClick={() => setIsTimelineOpen(!isTimelineOpen)}
           >
             {isTimelineOpen ? <ChevronDown size={24} /> : <ChevronUp size={24} />}
           </button>
           {isTimelineOpen && (
-            <div className="p-4 h-56">
+            <div className="p-4 h-52">
               <TimelineView data={filteredData} dateRange={dateRange} onRangeChange={handleDateRangeChange} />
             </div>
           )}
         </div>
 
         {error && (
-          <div className="absolute top-24 left-1/2 transform -translate-x-1/2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md">
+          <div className="absolute top-24 left-1/2 transform -translate-x-1/2 bg-red-900 bg-opacity-80 text-white p-4 rounded shadow-md z-40">
             <p className="font-bold">Error</p>
             <p>{error}</p>
           </div>
