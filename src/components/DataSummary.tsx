@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData } from 'chart.js';
-import { ArrowUpRight, ArrowDownRight } from 'react-feather';
+import { ArrowUpRight, ArrowDownRight, Minus } from 'react-feather';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -191,15 +191,15 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
             <div key={variant} className="bg-gray-700 p-3 rounded-md">
               <div className="flex items-center justify-between">
                 <span className="text-white">{variant}</span>
-                <span className={`text-xs ${isIncrease ? 'text-red-400' : 'text-green-400'}`}>
-                  {isIncrease ? <ArrowUpRight /> : <ArrowDownRight />}
+                <span className={`text-xs ${count === 0 ? 'text-gray-400' : isIncrease ? 'text-red-400' : 'text-green-400'}`}>
+                  {count === 0 ? <Minus size={16} /> : isIncrease ? <ArrowUpRight /> : <ArrowDownRight />}
                 </span>
               </div>
               <div className="mt-1 flex items-center justify-between">
-                <span className={`text-sm ${isIncrease ? 'text-red-400' : 'text-green-400'}`}>
-                  {isIncrease ? '+' : '-'}{count}
+                <span className={`text-sm ${count === 0 ? 'text-gray-400' : isIncrease ? 'text-red-400' : 'text-green-400'}`}>
+                  {count === 0 ? '-' : (isIncrease ? '+' : '-') + count}
                 </span>
-                <span className={`text-sm ${isIncrease ? 'text-red-400' : 'text-green-400'}`}>
+                <span className={`text-sm ${count === 0 ? 'text-gray-400' : isIncrease ? 'text-red-400' : 'text-green-400'}`}>
                   {percentage.toFixed(2)}%
                 </span>
               </div>
@@ -227,7 +227,10 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
       {/* Recent Reports */}
       <div className="bg-gray-900 p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-2 text-gray-300">Recent Reports</h3>
-        <div className="h-48 overflow-y-auto">
+        <div className="h-48 overflow-y-auto pr-2" style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4B5563 #1F2937'
+        }}>
           <ul className="space-y-2">
             {filteredData
               .sort((a, b) => parseDate(b.timestamp).getTime() - parseDate(a.timestamp).getTime())
