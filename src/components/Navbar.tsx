@@ -15,7 +15,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
-            <img src={swissFlag} alt="Swiss Flag" className="h-8 w-8" />
+            <img src={swissFlag} alt="Swiss Flag" className="h-16 w-16" />
             <h1 className="text-white font-bold text-xl">Bird Flu Cases in Switzerland</h1>
           </div>
           <div className="flex items-center space-x-4">
