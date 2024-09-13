@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       <div className="flex flex-1 pb-4">
         {/* Filters */}
-        <aside className="w-1/4 bg-gray-800">
+        <aside className="w-1/10 bg-gray-800 ml-4">
           <Filters
             selectedSpecies={selectedSpecies}
             uniqueSpecies={getUniqueSpecies(data)}
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
         {/* Main Content */}
         <main className="w-1/2 flex flex-col px-4">
           {/* Graph View */}
-          <div className="flex-1 bg-gray-800 mb-6">
+          <div className="flex-1 bg-gray-800">
             <GraphView data={filteredData} />
           </div>
 
@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
         </main>
 
         {/* Data Summary */}
-        <aside className="w-1/4 bg-gray-800">
+        <aside className="w-auto bg-gray-800">
           <DataSummary filteredData={filteredData} dateRange={dateRange} />
         </aside>
       </div>

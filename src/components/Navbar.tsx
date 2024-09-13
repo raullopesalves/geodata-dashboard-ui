@@ -12,15 +12,15 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="bg-gray-900 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <img src={swissFlag} alt="Swiss Flag" className="h-8 w-8 mr-3" />
+          <div className="flex items-center space-x-3">
+            <img src={swissFlag} alt="Swiss Flag" className="h-8 w-8" />
             <h1 className="text-white font-bold text-xl">Bird Flu Cases in Switzerland</h1>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <button 
-              className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center mr-4 hover:bg-gray-700"
+              className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center hover:bg-gray-700"
               onClick={() => setIsHelpModalVisible(true)}
             >
               <HelpCircle size={18} className="mr-2" />

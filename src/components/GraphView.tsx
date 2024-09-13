@@ -25,7 +25,7 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
   const totalCases = (point: DataPoint) => point.H5N1 + point.H5N2 + point.H7N2 + point.H7N8;
 
   return (
-    <div className="h-[500px] w-full">
+    <div className="h-full w-full">
       <MapContainer center={center} zoom={zoom} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
