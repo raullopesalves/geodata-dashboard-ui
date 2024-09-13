@@ -142,11 +142,18 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
   const center: [number, number] = [46.8182, 8.2275]; // Approximate center of Switzerland
   const zoom = 8;
 
+  const apiKey = process.env.REACT_APP_MAPTILER_API_KEY;
+
+  const fallbackUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const url = apiKey
+  ? `https://api.maptiler.com/maps/ch-swisstopo-lbm-dark/{z}/{x}/{y}.png?key=${apiKey}`
+  : fallbackUrl;
+
   return (
     <div className="h-full w-full">
       <MapContainer center={center} zoom={zoom} style={{ height: '100%', width: '100%' }}>
         <TileLayer
-          url="https://api.maptiler.com/maps/ch-swisstopo-lbm-dark/{z}/{x}/{y}.png?key=***REMOVED***"
+          url={url}
           attribution='&copy; <a href="https://www.maptiler.com/copyright">MapTiler</a> contributors'
         />
         <MarkerClusterGroup data={data} />
