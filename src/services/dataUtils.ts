@@ -12,6 +12,12 @@ export interface DataPoint {
   provenance: string;
 }
 
+// Custom date parsing function
+function parseCustomDate(dateString: string): Date {
+  const [day, month, year] = dateString.split('.').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export const parseCSV = async (url: string): Promise<DataPoint[]> => {
   try {
     const response = await fetch(url);
@@ -37,7 +43,9 @@ export const parseCSV = async (url: string): Promise<DataPoint[]> => {
               H5N2: parseInt(String(item.H5N2)) || 0,
               H7N2: parseInt(String(item.H7N2)) || 0,
               H7N8: parseInt(String(item.H7N8)) || 0,
+              timestamp: item.timestamp, // Keep the original string format
             }));
+          console.log('Sample data point:', validData[0]);
           resolve(validData);
         },
         error: (error: Error) => {
@@ -62,7 +70,7 @@ export const filterData = (
   selectedProvenances: string[]
 ): DataPoint[] => {
   return data.filter(point => {
-    const date = new Date(point.timestamp);
+    const date = parseCustomDate(point.timestamp);
     const inDateRange = date >= dateRange[0] && date <= dateRange[1];
     const speciesMatch = selectedSpecies.length === 0 || selectedSpecies.includes(point.species);
     const strainMatch = selectedStrains.length === 0 || 
@@ -90,4 +98,4 @@ export const getUniqueProvenances = (data: DataPoint[]): string[] => {
   return Array.from(new Set(data.map(point => point.provenance)));
 };
 
-
+export { parseCustomDate };

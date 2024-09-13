@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState, useMemo, useCallback } from 'react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Brush } from 'recharts';
 
 interface DataPoint {
   latitude: number;
@@ -20,85 +20,110 @@ interface TimelineViewProps {
 }
 
 const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, onRangeChange }) => {
-  const [intervalRange, setIntervalRange] = useState<[number, number]>([0, 100]);
+  const [grouping, setGrouping] = useState<'10y' | '50y' | '100y' | '500y'>('50y');
+
+  const parseDate = (dateString: string): Date => {
+    const [day, month, year] = dateString.split('.').map(Number);
+    return new Date(year, month - 1, day);
+  };
 
   const aggregatedData = useMemo(() => {
-    const aggregated: { date: string; totalCases: number }[] = [];
+    const groupedData: { date: number; totalCases: number }[] = [];
+    const groupSize = grouping === '10y' ? 10 : grouping === '50y' ? 50 : grouping === '100y' ? 100 : 500;
+
     data.forEach(point => {
-      const date = new Date(point.timestamp);
+      const date = parseDate(point.timestamp);
       if (isNaN(date.getTime())) {
-        console.warn(`Invalid date: ${point.timestamp}`);
         return;
       }
-      const dateString = date.toISOString().split('T')[0];
-      const existingEntry = aggregated.find(item => item.date === dateString);
+
+      const year = date.getFullYear();
+      const groupedYear = Math.floor(year / groupSize) * groupSize;
+      const existingEntry = groupedData.find(item => item.date === groupedYear);
+
       if (existingEntry) {
         existingEntry.totalCases += point.H5N1 + point.H5N2 + point.H7N2 + point.H7N8;
       } else {
-        aggregated.push({ date: dateString, totalCases: point.H5N1 + point.H5N2 + point.H7N2 + point.H7N8 });
+        groupedData.push({ date: groupedYear, totalCases: point.H5N1 + point.H5N2 + point.H7N2 + point.H7N8 });
       }
     });
-    return aggregated.sort((a, b) => a.date.localeCompare(b.date));
-  }, [data]);
 
-  const filteredData = useMemo(() => {
-    const startIndex = Math.floor(aggregatedData.length * intervalRange[0] / 100);
-    const endIndex = Math.floor(aggregatedData.length * intervalRange[1] / 100);
-    return aggregatedData.slice(startIndex, endIndex + 1);
-  }, [aggregatedData, intervalRange]);
+    return groupedData.sort((a, b) => a.date - b.date);
+  }, [data, grouping]);
 
-  const handleIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value);
-    const newRange: [number, number] = [...intervalRange];
-    newRange[event.target.name === 'min' ? 0 : 1] = value;
-    setIntervalRange(newRange);
-    
-    const startIndex = Math.floor(aggregatedData.length * newRange[0] / 100);
-    const endIndex = Math.floor(aggregatedData.length * newRange[1] / 100);
-    
-    if (aggregatedData[startIndex] && aggregatedData[endIndex]) {
-      const newDateRange: [Date, Date] = [
-        new Date(aggregatedData[startIndex].date),
-        new Date(aggregatedData[endIndex].date)
-      ];
-      onRangeChange(newDateRange);
+  const handleBrushChange = useCallback((brushData: any) => {
+    if (brushData && brushData.startIndex !== undefined && brushData.endIndex !== undefined) {
+      const startDate = new Date(aggregatedData[brushData.startIndex].date, 0, 1);
+      const endDate = new Date(aggregatedData[brushData.endIndex].date + Number(grouping.slice(0, -1)) - 1, 11, 31);
+      onRangeChange([startDate, endDate]);
     }
+  }, [aggregatedData, grouping, onRangeChange]);
+
+  const brushStartIndex = useMemo(() => {
+    return Math.max(0, aggregatedData.findIndex(d => d.date >= dateRange[0].getFullYear()));
+  }, [aggregatedData, dateRange]);
+
+  const brushEndIndex = useMemo(() => {
+    return Math.min(
+      aggregatedData.length - 1,
+      aggregatedData.findIndex(d => d.date > dateRange[1].getFullYear()) - 1
+    );
+  }, [aggregatedData, dateRange]);
+
+  const formatXAxis = (tickItem: number) => tickItem.toString();
+
+  const formatTooltip = (value: number, name: string, props: any) => {
+    const year = props.payload.date;
+    return [`Total cases: ${value}`, `Year: ${year}`];
   };
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow">
       <div className="mb-4 flex items-center space-x-4">
+        <select
+          value={grouping}
+          onChange={(e) => setGrouping(e.target.value as '10y' | '50y' | '100y' | '500y')}
+          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
+        >
+          <option value="10y">10 Years</option>
+          <option value="50y">50 Years</option>
+          <option value="100y">100 Years</option>
+          <option value="500y">500 Years</option>
+        </select>
         <input
-          type="range"
-          name="min"
-          min="0"
-          max="100"
-          value={intervalRange[0]}
-          onChange={handleIntervalChange}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+          type="date"
+          value={dateRange[0].toISOString().split('T')[0]}
+          onChange={(e) => onRangeChange([new Date(e.target.value), dateRange[1]])}
+          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
         />
         <input
-          type="range"
-          name="max"
-          min="0"
-          max="100"
-          value={intervalRange[1]}
-          onChange={handleIntervalChange}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+          type="date"
+          value={dateRange[1].toISOString().split('T')[0]}
+          onChange={(e) => onRangeChange([dateRange[0], new Date(e.target.value)])}
+          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
         />
       </div>
-      <div className="h-64">
+      <div className="relative h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={filteredData}>
-            <XAxis dataKey="date" stroke="#fff" />
-            <YAxis stroke="#fff" />
-            <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', color: '#fff' }} />
-            <Line type="monotone" dataKey="totalCases" stroke="#8884d8" strokeWidth={2} />
-          </LineChart>
+          <AreaChart data={aggregatedData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" tickFormatter={formatXAxis} stroke="#ddd" />
+            <YAxis stroke="#ddd" />
+            <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', color: '#ddd' }} formatter={formatTooltip} />
+            <Area type="monotone" dataKey="totalCases" stroke="#4f9da6" fill="#4f9da6" />
+            <Brush
+              dataKey="date"
+              height={30}
+              stroke="#8884d8"
+              onChange={handleBrushChange}
+              startIndex={brushStartIndex}
+              endIndex={brushEndIndex}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
   );
 };
 
-export default TimelineView;
+export default React.memo(TimelineView);
