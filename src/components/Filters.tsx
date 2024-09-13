@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'react-feather';
+import React from 'react';
 
+// Import bird images
 import eurasianbluetitImg from '../assets/images/birds/eurasianbluetit.png';
 import eurasianmagpieImg from '../assets/images/birds/eurasianmagpie.png';
 import duckImg from '../assets/images/birds/duck.png';
@@ -11,15 +11,18 @@ import turkeyImg from '../assets/images/birds/turkey.png';
 import europeanrobinImg from '../assets/images/birds/europeanrobin.png';
 import housesparrowImg from '../assets/images/birds/housesparrow.png';
 import gooseImg from '../assets/images/birds/goose.png';
-import blackbirdImg from '../assets/images/birds/blackbird.png';
-import barnswallowImg from '../assets/images/birds/barnswallow.png';
-
 import placeholderbirdImg from '../assets/images/birds/placeholderbird.png';
 
 interface FiltersProps {
   selectedSpecies: string[];
   uniqueSpecies: string[];
+  selectedStrains: string[];
+  uniqueStrains: string[];
+  selectedProvenances: string[];
+  uniqueProvenances: string[];
   onSpeciesChange: (species: string) => void;
+  onStrainChange: (strain: string) => void;
+  onProvenanceChange: (provenance: string) => void;
 }
 
 const birdImages: { [key: string]: string } = {
@@ -32,67 +35,78 @@ const birdImages: { [key: string]: string } = {
   'Turkey': turkeyImg,
   'European Robin': europeanrobinImg,
   'House Sparrow': housesparrowImg,
-  'Goose': gooseImg,
-  'Blackbird': blackbirdImg,
-  'Barn Swallow': barnswallowImg
-};
-
-const getBirdImage = (species: string) => {
-  return birdImages[species] || placeholderbirdImg;
+  'Goose': gooseImg
 };
 
 const Filters: React.FC<FiltersProps> = ({
   selectedSpecies,
   uniqueSpecies,
+  selectedStrains,
+  uniqueStrains,
+  selectedProvenances,
+  uniqueProvenances,
   onSpeciesChange,
+  onStrainChange,
+  onProvenanceChange,
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
-
   return (
-    <div 
-      className={`fixed top-16 left-0 bottom-0 bg-gray-900 bg-opacity-80 shadow-lg transition-all duration-300 ease-in-out z-30 ${
-        isOpen ? 'w-80' : 'w-10'
-      }`}
-    >
-      <button
-        className={`absolute top-2 ${isOpen ? '-right-10' : 'left-0'} p-2 bg-gray-700 rounded-r-md hover:bg-gray-600 transition-colors duration-200 text-white`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
-      </button>
-      {isOpen && (
-        <div className="p-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-          <h2 className="text-xl font-semibold mb-4 text-white mt-8">Bird Species</h2>
-          <div className="grid grid-cols-2 gap-4">
+    <div className="bg-gray-800 p-4 rounded-lg shadow text-white">
+      <h2 className="text-xl font-bold mb-4">Filters</h2>
+      <div className="space-y-6">
+        <div>
+          <h3 className="font-semibold mb-2">Bird Species</h3>
+          <div className="flex flex-wrap gap-2">
             {uniqueSpecies.map(species => (
-              <div key={species} className="relative">
-                <button
-                  onClick={() => onSpeciesChange(species)}
-                  className={`w-full aspect-square rounded-lg overflow-hidden shadow-md transition-all duration-200 transform hover:scale-105 focus:outline-none ${
-                    selectedSpecies.includes(species) ? 'ring-2 ring-blue-500' : ''
-                  }`}
-                >
-                  <div className="relative w-full h-full">
-                    <img
-                      src={getBirdImage(species)}
-                      alt={species}
-                      className={`w-full h-full object-cover transition-all duration-200`}
-                    />
-                    <div className={`absolute inset-0 bg-black transition-opacity duration-200 ${
-                      selectedSpecies.includes(species) ? 'opacity-0' : 'opacity-50'
-                    }`}></div>
-                  </div>
-                  <div className="absolute inset-0 flex items-end p-2">
-                    <span className="text-white text-sm font-medium truncate drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
-                      {species}
-                    </span>
-                  </div>
-                </button>
-              </div>
+              <button
+                key={species}
+                onClick={() => onSpeciesChange(species)}
+                className={`flex items-center p-1 rounded ${
+                  selectedSpecies.includes(species) ? 'bg-blue-600' : 'bg-gray-700'
+                } hover:bg-blue-500 transition-colors`}
+              >
+                <img 
+                  src={birdImages[species] || placeholderbirdImg} 
+                  alt={species} 
+                  className="w-6 h-6 object-cover rounded-full mr-1"
+                />
+                <span className="text-xs">{species}</span>
+              </button>
             ))}
           </div>
         </div>
-      )}
+        <div>
+          <h3 className="font-semibold mb-2">Virus Strains</h3>
+          <div className="flex flex-wrap gap-2">
+            {uniqueStrains.map(strain => (
+              <button
+                key={strain}
+                onClick={() => onStrainChange(strain)}
+                className={`px-2 py-1 rounded ${
+                  selectedStrains.includes(strain) ? 'bg-green-600' : 'bg-gray-700'
+                } hover:bg-green-500 transition-colors`}
+              >
+                {strain}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 className="font-semibold mb-2">Provenance</h3>
+          <div className="flex flex-wrap gap-2">
+            {uniqueProvenances.map(provenance => (
+              <button
+                key={provenance}
+                onClick={() => onProvenanceChange(provenance)}
+                className={`px-2 py-1 rounded ${
+                  selectedProvenances.includes(provenance) ? 'bg-yellow-600' : 'bg-gray-700'
+                } hover:bg-yellow-500 transition-colors`}
+              >
+                {provenance}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

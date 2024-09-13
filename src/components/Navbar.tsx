@@ -1,84 +1,61 @@
 import React, { useState } from 'react';
-import flag from '../assets/images/flag.png';
+import { HelpCircle, Globe } from 'react-feather';
+import swissFlag from '../assets/images/flag.png';
 
 const Navbar: React.FC = () => {
   const [language, setLanguage] = useState('English');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isHelpModalVisible, setIsHelpModalVisible] = useState(false);
 
-  const handleLanguageChange = (newLanguage: string) => {
-    setLanguage(newLanguage);
-    setIsDropdownOpen(false); // Close dropdown after selection
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(event.target.value);
   };
 
   return (
-    <nav style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', padding: '0 20px' }} className="shadow-lg w-full">
-      <div className="flex items-center justify-between h-16">
-        <div className="flex items-center">
-          <img 
-            src={flag} 
-            alt="Flag" 
-            style={{ 
-              width: '60px', 
-              height: '60px', 
-              marginRight: '10px' 
-            }} 
-          />
-          <h1 className="text-2xl font-bold text-white">Bird Flu Cases in Switzerland</h1>
-        </div>
-        <div className="relative">
-          <button 
-            onClick={toggleDropdown}
-            className="flex items-center text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-md focus:outline-none"
-          >
-            <span>{language}</span>
-            <svg className="ml-2 w-4 h-4 fill-current" viewBox="0 0 20 20">
-              <path d="M6 8l4 4 4-4H6z" />
-            </svg>
-          </button>
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-20">
-              <ul className="py-1">
-                <li>
-                  <button 
-                    onClick={() => handleLanguageChange('English')}
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                  >
-                    English
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleLanguageChange('Deutsch')}
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                  >
-                    Deutsch
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleLanguageChange('Français')}
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                  >
-                    Français
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleLanguageChange('Italiano')}
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                  >
-                    Italiano
-                  </button>
-                </li>
-              </ul>
+    <nav className="bg-gray-900 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <img src={swissFlag} alt="Swiss Flag" className="h-8 w-8 mr-3" />
+            <h1 className="text-white font-bold text-xl">Bird Flu Cases in Switzerland</h1>
+          </div>
+          <div className="flex items-center">
+            <button 
+              className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center mr-4 hover:bg-gray-700"
+              onClick={() => setIsHelpModalVisible(true)}
+            >
+              <HelpCircle size={18} className="mr-2" />
+              Help
+            </button>
+            <div className="relative">
+              <select 
+                value={language} 
+                onChange={handleLanguageChange}
+                className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium appearance-none pr-8"
+              >
+                <option value="English">English</option>
+                <option value="Deutsch">Deutsch</option>
+                <option value="Français">Français</option>
+                <option value="Italiano">Italiano</option>
+              </select>
+              <Globe size={18} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white pointer-events-none" />
             </div>
-          )}
+          </div>
         </div>
       </div>
+      {isHelpModalVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-gray-800 p-6 rounded-lg max-w-md text-white">
+            <h2 className="text-xl font-bold mb-4">Dashboard Help</h2>
+            <p className="mb-4">This dashboard provides an overview of bird flu cases in Switzerland. Use the filters on the left to select specific species, virus strains, and data sources. The timeline at the bottom allows you to view trends over different time periods.</p>
+            <button 
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              onClick={() => setIsHelpModalVisible(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

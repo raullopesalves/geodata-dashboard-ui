@@ -54,14 +54,40 @@ export const parseCSV = async (url: string): Promise<DataPoint[]> => {
   }
 };
 
-export const filterData = (data: DataPoint[], dateRange: [Date, Date], species: string[]): DataPoint[] => {
+export const filterData = (
+  data: DataPoint[],
+  dateRange: [Date, Date],
+  selectedSpecies: string[],
+  selectedStrains: string[],
+  selectedProvenances: string[]
+): DataPoint[] => {
   return data.filter(point => {
     const date = new Date(point.timestamp);
-    return date >= dateRange[0] && date <= dateRange[1] && 
-           (species.length === 0 || species.includes(point.species));
+    const inDateRange = date >= dateRange[0] && date <= dateRange[1];
+    const speciesMatch = selectedSpecies.length === 0 || selectedSpecies.includes(point.species);
+    const strainMatch = selectedStrains.length === 0 || 
+      (selectedStrains.includes('H5N1') && point.H5N1 > 0) ||
+      (selectedStrains.includes('H5N2') && point.H5N2 > 0) ||
+      (selectedStrains.includes('H7N2') && point.H7N2 > 0) ||
+      (selectedStrains.includes('H7N8') && point.H7N8 > 0);
+    const provenanceMatch = selectedProvenances.length === 0 || selectedProvenances.includes(point.provenance);
+    
+    return inDateRange && speciesMatch && strainMatch && provenanceMatch;
   });
 };
 
 export const getUniqueSpecies = (data: DataPoint[]): string[] => {
-  return Array.from(new Set(data.map(item => item.species)));
+  return Array.from(new Set(data.map(point => point.species)));
 };
+
+export const getUniqueStrains = (data: DataPoint[]): string[] => {
+  return ['H5N1', 'H5N2', 'H7N2', 'H7N8'].filter(strain => 
+    data.some(point => (point[strain as keyof DataPoint] as number) > 0)
+  );
+};
+
+export const getUniqueProvenances = (data: DataPoint[]): string[] => {
+  return Array.from(new Set(data.map(point => point.provenance)));
+};
+
+

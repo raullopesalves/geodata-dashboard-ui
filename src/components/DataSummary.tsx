@@ -18,25 +18,30 @@ interface DataSummaryProps {
 }
 
 const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) => {
-  const recentReports = filteredData.slice(0, 5);
+  const totalCases = filteredData.reduce((sum, point) => 
+    sum + point.H5N1 + point.H5N2 + point.H7N2 + point.H7N8, 0
+  );
+
+  const uniqueSpecies = new Set(filteredData.map(point => point.species)).size;
+  const uniqueProvenances = new Set(filteredData.map(point => point.provenance)).size;
 
   return (
-    <div className="absolute top-24 right-4 w-64 space-y-4">
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg pointer-events-auto">
-        <h2 className="text-xl font-semibold mb-2">Data Summary</h2>
-        <p>Total data points: {filteredData.length}</p>
-        <p>Date range: {dateRange[0].toDateString()} - {dateRange[1].toDateString()}</p>
+    <div className="bg-gray-800 p-4 rounded-lg shadow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <h3 className="text-lg font-semibold mb-2 text-gray-300">Total Cases</h3>
+        <p className="text-3xl font-bold text-white">{totalCases}</p>
       </div>
-
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg pointer-events-auto">
-        <h2 className="text-xl font-semibold mb-2">Recent Reports</h2>
-        <ul className="space-y-2">
-          {recentReports.map((item, index) => (
-            <li key={index} className="text-sm">
-              <span className="font-semibold">{new Date(item.timestamp).toLocaleDateString()}</span>: {item.H5N1 + item.H5N2 + item.H7N2 + item.H7N8} cases of {item.species}
-            </li>
-          ))}
-        </ul>
+      <div>
+        <h3 className="text-lg font-semibold mb-2 text-gray-300">Date Range</h3>
+        <p className="text-white">{dateRange[0].toLocaleDateString()} - {dateRange[1].toLocaleDateString()}</p>
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-2 text-gray-300">Unique Species</h3>
+        <p className="text-3xl font-bold text-white">{uniqueSpecies}</p>
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-2 text-gray-300">Unique Provenances</h3>
+        <p className="text-3xl font-bold text-white">{uniqueProvenances}</p>
       </div>
     </div>
   );
