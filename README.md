@@ -71,7 +71,7 @@ This will execute the test suite and display the results in the terminal.
 ## Authors
 
 Raúl Alves \
-[LinkedIn](https://www.linkedin.com/in/ra%C3%BAl-alves-b870a8210/)
+[LinkedIn](https://www.linkedin.com/in/ra%C3%BAl-alves-b870a8210/) \
 [GitHub](https://github.com/raullopesalves)
 
 ## Version History
