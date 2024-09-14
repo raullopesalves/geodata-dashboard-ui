@@ -31,13 +31,13 @@ To set up this project locally, follow these steps:
 
 1. **Clone the Repository**
 
-   ```
-   git clone https://github.com/your-username/your-repo-name.git
-   ```
+```
+git clone https://github.com/raullopesalves/geodata-dashboard-ui.git
+```
 2. **Navigate to the Project Directory**
  ```
-   cd your-repo-name
-   ```
+cd geodata-dashboard-ui
+```
 3. **Install Dependencies**
 Install the project dependencies using npm:
  ```
