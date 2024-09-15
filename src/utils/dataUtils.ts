@@ -1,16 +1,5 @@
 import Papa from 'papaparse';
-
-export interface DataPoint {
-  latitude: number;
-  longitude: number;
-  species: string;
-  H5N1: number;
-  H5N2: number;
-  H7N2: number;
-  H7N8: number;
-  timestamp: string;
-  provenance: string;
-}
+import { DataPoint } from '../types/DataPoint';
 
 // Custom date parsing function
 function parseCustomDate(dateString: string): Date {

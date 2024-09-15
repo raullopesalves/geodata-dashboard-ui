@@ -1,17 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Brush } from 'recharts';
+import { DataPoint } from '../types/DataPoint';
 
-interface DataPoint {
-  latitude: number;
-  longitude: number;
-  species: string;
-  H5N1: number;
-  H5N2: number;
-  H7N2: number;
-  H7N8: number;
-  timestamp: string;
-  provenance: string;
-}
 
 interface TimelineViewProps {
   data: DataPoint[];

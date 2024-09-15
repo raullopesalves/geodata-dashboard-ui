@@ -2,20 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData } from 'chart.js';
 import { ArrowUpRight, ArrowDownRight, Minus } from 'react-feather';
+import { DataPoint } from '../types/DataPoint';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
-
-interface DataPoint {
-  latitude: number;
-  longitude: number;
-  species: string;
-  H5N1: number;
-  H5N2: number;
-  H7N2: number;
-  H7N8: number;
-  timestamp: string;
-  provenance: string;
-}
 
 interface DataSummaryProps {
   filteredData: DataPoint[];

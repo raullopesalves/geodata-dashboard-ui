@@ -3,7 +3,8 @@ import GraphView from './GraphView';
 import TimelineView from './TimelineView';
 import Filters from './Filters';
 import DataSummary from './DataSummary';
-import { parseCSV, filterData, getUniqueSpecies, getUniqueStrains, getUniqueProvenances, DataPoint, parseCustomDate } from '../services/dataUtils';
+import { parseCSV, filterData, getUniqueSpecies, getUniqueStrains, getUniqueProvenances, parseCustomDate } from '../utils/dataUtils';
+import { DataPoint } from '../types/DataPoint';
 
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<DataPoint[]>([]);

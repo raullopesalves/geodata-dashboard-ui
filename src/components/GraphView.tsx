@@ -5,18 +5,7 @@ import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-
-interface DataPoint {
-  latitude: number;
-  longitude: number;
-  species: string;
-  H5N1: number;
-  H5N2: number;
-  H7N2: number;
-  H7N8: number;
-  timestamp: string;
-  provenance: string;
-}
+import { DataPoint } from '../types/DataPoint';
 
 interface GraphViewProps {
   data: DataPoint[];
