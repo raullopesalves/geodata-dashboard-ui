@@ -3,6 +3,7 @@ import GraphView from './GraphView';
 import TimelineView from './TimelineView';
 import Filters from './Filters';
 import DataSummary from './dataSummaryComponents/DataSummary';
+import Footer from './Footer';
 import { parseCSV, filterData, getUniqueSpecies, getUniqueStrains, getUniqueProvenances, parseCustomDate } from '../utils/dataUtils';
 import { DataPoint } from '../types/DataPoint';
 
@@ -143,11 +144,15 @@ const Dashboard: React.FC = () => {
         </aside>
       </div>
 
-      {/* Debug Information */}
-      <div className="bg-gray-800 p-2 text-xs">
-        <p>Total: {data.length} | Filtered: {filteredData.length} | Range: {filters.dateRange[0].toISOString().split('T')[0]} to {filters.dateRange[1].toISOString().split('T')[0]}</p>
-        <p className="truncate">Species: {filters.selectedSpecies.join(', ') || 'None'} | Strains: {filters.selectedStrains.join(', ') || 'None'} | Provenances: {filters.selectedProvenances.join(', ') || 'None'}</p>
-      </div>
+      {/* Footer with Debug Info Button */}
+      <Footer
+        dataLength={data.length}
+        filteredDataLength={filteredData.length}
+        dateRange={filters.dateRange}
+        selectedSpecies={filters.selectedSpecies}
+        selectedStrains={filters.selectedStrains}
+        selectedProvenances={filters.selectedProvenances}
+      />
     </div>
   );
 };
