@@ -6,10 +6,10 @@ export const STRAIN_COLORS = {
 } as const;
 
 export const STRAIN_COLORS_TRANSPARENT = {
-    H5N1: 'rgba(74, 222, 128, 0.6)',
-    H5N2: 'rgba(248, 113, 113, 0.6)',
-    H7N2: 'rgba(251, 191, 36, 0.6)',
-    H7N8: 'rgba(96, 165, 250, 0.6)'
+    H5N1: 'rgba(74, 222, 128, 0.8)',
+    H5N2: 'rgba(248, 113, 113, 0.8)',
+    H7N2: 'rgba(251, 191, 36, 0.8)',
+    H7N8: 'rgba(96, 165, 250, 0.8)'
 } as const;
 
 export const WILD_LIVESTOCK_CHART_COLORS = {
