@@ -47,17 +47,24 @@ const Navbar: React.FC = () => {
       
       {isHelpModalVisible && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-gray-800 p-6 rounded-lg max-w-md text-white">
-            <h2 className="text-xl font-bold mb-4">Dashboard Help</h2>
-            <p className="mb-4">This dashboard provides an overview of bird flu cases in Switzerland. Use the filters on the left to select specific species, virus strains, and data sources. The timeline at the bottom allows you to view trends over different time periods.</p>
-            <button 
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              onClick={() => setIsHelpModalVisible(false)}
-            >
-              Close
-            </button>
-          </div>
+        <div className="bg-gray-800 p-6 rounded-lg max-w-md text-white">
+          <h2 className="text-xl font-bold mb-4">Dashboard Help</h2>
+          <p className="mb-4">This dashboard provides a comprehensive overview of bird flu cases in Switzerland. Here’s a breakdown of its features:</p>
+          <ul className="mb-4 list-disc pl-5">
+            <li><strong>Filter Section:</strong> Use this to filter data by 12 different bird species, 4 virus strains, and 2 types of provenance. This allows you to focus on specific aspects of the data.</li>
+            <li><strong>Map Section:</strong> View the locations of reported cases on the map, with data points dotted to indicate where reports were located. Zoom in to see more details.</li>
+            <li><strong>Timeline Section:</strong> This graph lets you view trends over various time periods. You can select a custom interval to filter the data visualization according to your needs.</li>
+            <li><strong>Data Summary Section:</strong> This includes total cases reported, the date range, unique species, recent trends, recent reports, and two pie charts showing provenance and strain distribution.</li>
+          </ul>
+          <button 
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onClick={() => setIsHelpModalVisible(false)}
+          >
+            Close
+          </button>
         </div>
+      </div>
+      
       )}
     </>
   );

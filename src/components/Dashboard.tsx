@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import GraphView from './GraphView';
 import TimelineView from './TimelineView';
 import Filters from './Filters';
@@ -11,6 +11,9 @@ const Dashboard: React.FC = () => {
   const [data, setData] = useState<DataPoint[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  const initialDateRangeRef = useRef<[Date, Date] | null>(null);
+
   const [filters, setFilters] = useState({
     dateRange: [new Date(0), new Date()] as [Date, Date],
     selectedSpecies: [] as string[],
@@ -34,6 +37,9 @@ const Dashboard: React.FC = () => {
           const endDate = new Date(Math.max(...dates.map(Number)));
           
           console.log('Setting initial date range:', startDate, 'to', endDate);
+          if (initialDateRangeRef.current === null) {
+            initialDateRangeRef.current = [startDate, endDate];
+          }
           setFilters(prev => ({
             ...prev,
             dateRange: [startDate, endDate]
@@ -53,7 +59,6 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const filteredData = useMemo(() => {
-    console.log('Filtering data with date range:', filters.dateRange.map(d => d.toISOString()));
     return filterData(
       data,
       filters.dateRange,
@@ -62,6 +67,17 @@ const Dashboard: React.FC = () => {
       filters.selectedProvenances
     );
   }, [data, filters]);
+
+  const timelineData = useMemo(() => {
+    // Filter data with all filters except date range
+    return filterData(
+      data,
+      initialDateRangeRef.current || [new Date(0), new Date()],
+      filters.selectedSpecies,
+      filters.selectedStrains,
+      filters.selectedProvenances
+    );
+  }, [data, filters.selectedSpecies, filters.selectedStrains, filters.selectedProvenances]);
 
   const handleDateRangeChange = useCallback((newRange: [Date, Date]) => {
     console.log('Date range changed:', newRange.map(d => d.toISOString()));
@@ -106,7 +122,6 @@ const Dashboard: React.FC = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-900 text-white overflow-hidden">
       <div className="flex flex-1 pb-4 pl-4 pr-4 space-x-4 overflow-hidden">
-        {/* Filters */}
         <aside className="w-1/5 bg-gray-800 overflow-y-auto">
           <Filters
             selectedSpecies={filters.selectedSpecies}
@@ -121,30 +136,26 @@ const Dashboard: React.FC = () => {
           />
         </aside>
         
-        {/* Main Content */}
         <main className="flex-1 flex flex-col space-y-4 overflow-hidden w">
-          {/* Graph View */}
           <div className="flex-1 bg-gray-800 overflow-hidden">
             <GraphView data={filteredData} />
           </div>
 
-          {/* Timeline View */}
           <div className="h-fit bg-gray-800 overflow-hidden">
             <TimelineView 
-              data={filteredData}
-              dateRange={filters.dateRange} 
+              data={timelineData}
+              dateRange={filters.dateRange}
+              initialDateRange={initialDateRangeRef.current || filters.dateRange}
               onRangeChange={handleDateRangeChange} 
             />
           </div>
         </main>
 
-        {/* Data Summary */}
         <aside className="w-1/3 bg-gray-800 overflow-y-auto">
           <DataSummary filteredData={filteredData} dateRange={filters.dateRange} />
         </aside>
       </div>
 
-      {/* Footer with Debug Info Button */}
       <Footer
         dataLength={data.length}
         filteredDataLength={filteredData.length}

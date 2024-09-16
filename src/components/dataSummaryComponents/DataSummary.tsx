@@ -4,7 +4,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData } from 
 import { DataPoint } from '../../types/DataPoint';
 import Trends from './Trends';
 import RecentReports from './RecentReports';
-import { STRAIN_COLORS, WILD_LIVESTOCK_CHART_COLORS } from '../../constants/colors';
+import { SCROLLBAR_COLORS, STRAIN_COLORS, WILD_LIVESTOCK_CHART_COLORS } from '../../constants/colors';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -14,7 +14,7 @@ interface DataSummaryProps {
 }
 
 const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) => {
-  const [trendPeriod, setTrendPeriod] = useState<'10' | '50' | '100' | '500'>('50');
+  const [trendPeriod, setTrendPeriod] = useState<'10' | '50' | '100' | '500'>('10');
 
   const totalCases = useMemo(() => filteredData.reduce((sum, point) =>
     sum + point.H5N1 + point.H5N2 + point.H7N2 + point.H7N8, 0
@@ -95,15 +95,18 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow grid grid-cols-1 gap-3">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="bg-gray-800 p-4 rounded-lg shadow grid grid-cols-1 gap-3" style={{
+      scrollbarWidth: 'thin',
+      scrollbarColor: SCROLLBAR_COLORS.Colors
+    }}>
+      <div className="grid grid-cols-3 gap-2">
         <div>
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Total Cases</h3>
           <p className="text-3xl font-bold text-white">{totalCases}</p>
         </div>
         <div>
-          <h3 className="text-lg font-semibold mb-2 text-gray-300">Date Range</h3>
-          <p className="text-white">{dateRange[0].toLocaleDateString()} - {dateRange[1].toLocaleDateString()}</p>
+          <h3 className="text-lg font-semibold mb-2 text-gray-300">Year Range</h3>
+          <p className="text-white text-3xl font-bold">{dateRange[0].getFullYear()} - {dateRange[1].getFullYear()}</p>
         </div>
         <div>
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Unique Species</h3>
