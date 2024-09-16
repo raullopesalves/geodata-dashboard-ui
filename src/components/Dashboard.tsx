@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import GraphView from './GraphView';
 import TimelineView from './TimelineView';
 import Filters from './Filters';
-import DataSummary from './DataSummary';
+import DataSummary from './dataSummaryComponents/DataSummary';
 import { parseCSV, filterData, getUniqueSpecies, getUniqueStrains, getUniqueProvenances, parseCustomDate } from '../utils/dataUtils';
 import { DataPoint } from '../types/DataPoint';
 
@@ -103,10 +103,10 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <div className="flex flex-1 pb-4">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-900 text-white overflow-hidden">
+      <div className="flex flex-1 pb-4 pl-4 pr-4 space-x-4 overflow-hidden">
         {/* Filters */}
-        <aside className="w-1/10 bg-gray-800 ml-4">
+        <aside className="w-1/5 bg-gray-800 overflow-y-auto">
           <Filters
             selectedSpecies={filters.selectedSpecies}
             uniqueSpecies={getUniqueSpecies(data)}
@@ -121,14 +121,14 @@ const Dashboard: React.FC = () => {
         </aside>
         
         {/* Main Content */}
-        <main className="w-1/2 flex flex-col px-4">
+        <main className="flex-1 flex flex-col space-y-4 overflow-hidden w">
           {/* Graph View */}
-          <div className="flex-1 bg-gray-800">
+          <div className="flex-1 bg-gray-800 overflow-hidden">
             <GraphView data={filteredData} />
           </div>
 
           {/* Timeline View */}
-          <div className="bg-gray-800">
+          <div className="h-fit bg-gray-800 overflow-hidden">
             <TimelineView 
               data={data}
               dateRange={filters.dateRange} 
@@ -138,20 +138,15 @@ const Dashboard: React.FC = () => {
         </main>
 
         {/* Data Summary */}
-        <aside className="w-auto bg-gray-800 mr-4">
+        <aside className="w-1/3 bg-gray-800 overflow-y-auto">
           <DataSummary filteredData={filteredData} dateRange={filters.dateRange} />
         </aside>
       </div>
 
       {/* Debug Information */}
-      <div className="bg-gray-800 p-4 mt-4">
-        <h3 className="font-bold">Debug Info:</h3>
-        <p>Total data points: {data.length}</p>
-        <p>Filtered data points: {filteredData.length}</p>
-        <p>Date range: {filters.dateRange[0].toISOString()} to {filters.dateRange[1].toISOString()}</p>
-        <p>Selected Species: {filters.selectedSpecies.join(', ') || 'None'}</p>
-        <p>Selected Strains: {filters.selectedStrains.join(', ') || 'None'}</p>
-        <p>Selected Provenances: {filters.selectedProvenances.join(', ') || 'None'}</p>
+      <div className="bg-gray-800 p-2 text-xs">
+        <p>Total: {data.length} | Filtered: {filteredData.length} | Range: {filters.dateRange[0].toISOString().split('T')[0]} to {filters.dateRange[1].toISOString().split('T')[0]}</p>
+        <p className="truncate">Species: {filters.selectedSpecies.join(', ') || 'None'} | Strains: {filters.selectedStrains.join(', ') || 'None'} | Provenances: {filters.selectedProvenances.join(', ') || 'None'}</p>
       </div>
     </div>
   );

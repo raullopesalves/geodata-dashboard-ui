@@ -93,7 +93,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, onRangeCha
           className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
         />
       </div>
-      <div className="relative h-64">
+      <div className="relative h-48">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={aggregatedData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" />
