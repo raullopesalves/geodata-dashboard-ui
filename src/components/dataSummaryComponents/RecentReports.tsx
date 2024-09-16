@@ -1,16 +1,12 @@
 import React from 'react';
 import { DataPoint } from '../../types/DataPoint';
+import { SCROLLBAR_COLORS, STRAIN_COLORS } from '../../constants/colors';
 
 interface RecentReportsProps {
     filteredData: DataPoint[];
 }
 
-const strainColors: { [key: string]: string } = {
-    'H5N1': '#4ade80',
-    'H5N2': '#f87171',
-    'H7N2': '#fbbf24',
-    'H7N8': '#60a5fa'
-};
+const strainColors: { [key: string]: string } = STRAIN_COLORS;
 
 const RecentReports: React.FC<RecentReportsProps> = ({ filteredData }) => {
     const parseDate = (dateString: string): Date => {
@@ -32,7 +28,7 @@ const RecentReports: React.FC<RecentReportsProps> = ({ filteredData }) => {
             <h3 className="text-lg font-semibold mb-3 text-gray-300">Recent Reports</h3>
             <div className="h-48 overflow-y-auto pr-2" style={{
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#4B5563 #1F2937'
+                scrollbarColor: SCROLLBAR_COLORS.Colors
             }}>
                 <ul className="space-y-2">
                     {reportsWithStrains

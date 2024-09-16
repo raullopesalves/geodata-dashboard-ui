@@ -4,6 +4,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData } from 
 import { DataPoint } from '../../types/DataPoint';
 import Trends from './Trends';
 import RecentReports from './RecentReports';
+import { STRAIN_COLORS, WILD_LIVESTOCK_CHART_COLORS } from '../../constants/colors';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -62,7 +63,7 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
     labels: ['Wild', 'Livestock'],
     datasets: [{
       data: Object.values(wildVsLivestockData),
-      backgroundColor: ['#4ade80', '#f87171'],
+      backgroundColor: [WILD_LIVESTOCK_CHART_COLORS.Wild, WILD_LIVESTOCK_CHART_COLORS.Livestock],
     }],
   };
 
@@ -70,7 +71,7 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
     labels: ['H5N1', 'H5N2', 'H7N2', 'H7N8'],
     datasets: [{
       data: Object.values(virusVariantData),
-      backgroundColor: ['#4ade80', '#f87171', '#fbbf24', '#60a5fa'],
+      backgroundColor: [STRAIN_COLORS.H5N1, STRAIN_COLORS.H5N2, STRAIN_COLORS.H7N2, STRAIN_COLORS.H7N8],
     }],
   };
 

@@ -15,6 +15,7 @@ import blackbirdImg from '../assets/images/birds/blackbird.png';
 import barnswallowImg from '../assets/images/birds/barnswallow.png';
 
 import placeholderbirdImg from '../assets/images/birds/placeholderbird.png';
+import { SCROLLBAR_COLORS } from '../constants/colors';
 
 interface FiltersProps {
   selectedSpecies: string[];
@@ -59,7 +60,7 @@ const Filters: React.FC<FiltersProps> = ({
       <h2 className="text-xl font-bold mb-3 text-gray-300">Filters</h2>
       <div className="space-y-4 flex-grow overflow-y-auto pr-2" style={{
         scrollbarWidth: 'thin',
-        scrollbarColor: '#4B5563 #1F2937'
+        scrollbarColor: SCROLLBAR_COLORS.Colors
       }}>
         {/* Bird Species */}
         <div className="bg-gray-900 p-3 rounded-lg">

@@ -6,17 +6,13 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { DataPoint } from '../types/DataPoint';
+import { STRAIN_COLORS_TRANSPARENT } from '../constants/colors';
 
 interface GraphViewProps {
     data: DataPoint[];
 }
 
-const STRAIN_COLORS = {
-    H5N1: 'rgba(74, 222, 128, 0.6)',
-    H5N2: 'rgba(248, 113, 113, 0.6)',
-    H7N2: 'rgba(251, 191, 36, 0.6)',
-    H7N8: 'rgba(96, 165, 250, 0.6)'
-};
+const strainColorsTransparent = STRAIN_COLORS_TRANSPARENT;
 
 const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
     const map = useMap();
@@ -35,7 +31,7 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
 
     useEffect(() => {
         const mcgs: { [key: string]: L.MarkerClusterGroup } = {};
-        Object.keys(STRAIN_COLORS).forEach(strain => {
+        Object.keys(strainColorsTransparent).forEach(strain => {
             mcgs[strain] = L.markerClusterGroup({
                 chunkedLoading: true,
                 spiderfyOnMaxZoom: true,
@@ -46,7 +42,7 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
                     const childCount = cluster.getChildCount();
                     const size = Math.min(60, childCount * 3 + 20);
                     return L.divIcon({
-                        html: `<div style="background-color: ${STRAIN_COLORS[strain as keyof typeof STRAIN_COLORS]}; width: ${size}px; height: ${size}px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.2);">${childCount}</div>`,
+                        html: `<div style="background-color: ${strainColorsTransparent[strain as keyof typeof strainColorsTransparent]}; width: ${size}px; height: ${size}px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.2);">${childCount}</div>`,
                         className: 'marker-cluster-custom',
                         iconSize: L.point(size, size)
                     });
@@ -55,13 +51,13 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
         });
 
         filteredData.forEach((point) => {
-            Object.keys(STRAIN_COLORS).forEach(strain => {
+            Object.keys(strainColorsTransparent).forEach(strain => {
                 const strainCount = point[strain as keyof DataPoint];
                 if (typeof strainCount === 'number' && strainCount > 0) {
                     const size = Math.max(10, Math.min(30, Math.sqrt(strainCount) * 3));
                     const marker = L.circleMarker([point.latitude, point.longitude], {
                         radius: size / 2,
-                        fillColor: STRAIN_COLORS[strain as keyof typeof STRAIN_COLORS],
+                        fillColor: strainColorsTransparent[strain as keyof typeof strainColorsTransparent],
                         fillOpacity: 0.7,
                         color: 'white',
                         weight: 1,
@@ -100,7 +96,7 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
                 div.style.color = 'white';
                 div.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
 
-                Object.entries(STRAIN_COLORS).forEach(([strain, color]) => {
+                Object.entries(strainColorsTransparent).forEach(([strain, color]) => {
                     div.innerHTML += `<div style="display: flex; align-items: center; margin-bottom: 5px;">
             <div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1);"></div>
             <span>${strain}</span>
