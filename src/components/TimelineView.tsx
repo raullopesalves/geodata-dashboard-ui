@@ -115,14 +115,6 @@ const TimelineView: React.FC<TimelineViewProps> = ({
 
   const formatXAxis = (year: number) => year.toString();
 
-  const formatTooltip = (value: number, name: string, props: any) => {
-    if (props && props.payload && props.payload[0]) {
-      const year = props.payload[0].payload.year;
-      return [`Total variants: ${value}`, `Year: ${year}`];
-    }
-    return [];
-  };
-
   const startIndex = chartData.findIndex(
     (d) => d.year === startDate.getFullYear()
   );
@@ -137,6 +129,18 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     }
     return [0, 0];
   }, [chartData]);
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip" style={{ backgroundColor: '#000', padding: '5px' }}>
+          <p className="intro">{`Number of cases: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
 
   return (
     <div className="w-full h-80 bg-gray-800 p-4 rounded-lg">
@@ -194,11 +198,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
           <CartesianGrid strokeDasharray="3 3" stroke="#555" />
           <XAxis dataKey="year" stroke="#fff" tickFormatter={formatXAxis} />
           <YAxis stroke="#fff" />
-          <Tooltip
-            contentStyle={{ backgroundColor: "#333", border: "none" }}
-            itemStyle={{ color: "#fff" }}
-            formatter={formatTooltip}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Area
             type="monotone"
             dataKey="count"
@@ -214,6 +214,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             onChange={handleBrushChange}
             startIndex={startIndex !== -1 ? startIndex : 0}
             endIndex={endIndex !== -1 ? endIndex : chartData.length - 1}
+            travellerWidth={10}
           >
             <defs>
               <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
