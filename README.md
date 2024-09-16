@@ -52,23 +52,25 @@ This project uses the following dependencies:
 - **Leaflet**: A JavaScript library for interactive maps. [Leaflet](https://leafletjs.com/)
 
 <details>
-    <summary>Click to view more</summary>
-    - **@mui/material**: Material-UI provides a set of React components that implement Google's Material Design. [MUI](https://mui.com/)
-    - **Ant Design**: A design system for enterprise-level products. [Ant Design](https://ant.design/)
-    - **chart.js**: A popular JavaScript library for creating charts. [Chart.js](https://www.chartjs.org/)
-    - **react-chartjs-2**: A wrapper for Chart.js that makes it easy to use in React. [react-chartjs-2](https://github.com/reactchartjs/react-chartjs-2)
-    - **react-datepicker**: A datepicker component for React. [react-datepicker](https://reactdatepicker.com/)
-    - **lodash**: A JavaScript utility library that provides various functions for common programming tasks. [Lodash](https://lodash.com/)
-    - **rc-slider**: A React component for sliders. [rc-slider](https://github.com/react-component/slider)
-    - **react-papaparse**: A React wrapper for PapaParse, a powerful CSV parser. [react-papaparse](https://github.com/Greentube/react-papaparse)
-    - **leaflet.markercluster**: A plugin for Leaflet that clusters markers on maps. [leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster)
-    - **react-leaflet**: React components for Leaflet maps. [react-leaflet](https://react-leaflet.js.org/)
-    - **react-leaflet-markercluster**: A React wrapper for the Leaflet.markercluster plugin. [react-leaflet-markercluster](https://github.com/flexdinesh/react-leaflet-markercluster)
-    - **tailwind-scrollbar**: A plugin for adding custom scrollbars to Tailwind CSS. [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar)
-    - **@emotion/react** and **@emotion/styled**: Libraries for writing CSS styles with JavaScript. [Emotion](https://emotion.sh/docs/introduction)
-    - **@testing-library/react** and **@testing-library/jest-dom**: Libraries for testing React components and DOM elements. [Testing Library](https://testing-library.com/)
-    - **typescript**: A typed superset of JavaScript that compiles to plain JavaScript. [TypeScript](https://www.typescriptlang.org/)
-    - **web-vitals**: A library for measuring web performance. [web-vitals](https://github.com/GoogleChrome/web-vitals)
+  <summary>Click to view more</summary>
+
+  - **@mui/material**: Material-UI provides a set of React components that implement Google's Material Design. [MUI](https://mui.com/)
+  - **Ant Design**: A design system for enterprise-level products. [Ant Design](https://ant.design/)
+  - **chart.js**: A popular JavaScript library for creating charts. [Chart.js](https://www.chartjs.org/)
+  - **react-chartjs-2**: A wrapper for Chart.js that makes it easy to use in React. [react-chartjs-2](https://github.com/reactchartjs/react-chartjs-2)
+  - **react-datepicker**: A datepicker component for React. [react-datepicker](https://reactdatepicker.com/)
+  - **lodash**: A JavaScript utility library that provides various functions for common programming tasks. [Lodash](https://lodash.com/)
+  - **rc-slider**: A React component for sliders. [rc-slider](https://github.com/react-component/slider)
+  - **react-papaparse**: A React wrapper for PapaParse, a powerful CSV parser. [react-papaparse](https://github.com/Greentube/react-papaparse)
+  - **leaflet.markercluster**: A plugin for Leaflet that clusters markers on maps. [leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster)
+  - **react-leaflet**: React components for Leaflet maps. [react-leaflet](https://react-leaflet.js.org/)
+  - **react-leaflet-markercluster**: A React wrapper for the Leaflet.markercluster plugin. [react-leaflet-markercluster](https://github.com/flexdinesh/react-leaflet-markercluster)
+  - **tailwind-scrollbar**: A plugin for adding custom scrollbars to Tailwind CSS. [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar)
+  - **@emotion/react** and **@emotion/styled**: Libraries for writing CSS styles with JavaScript. [Emotion](https://emotion.sh/docs/introduction)
+  - **@testing-library/react** and **@testing-library/jest-dom**: Libraries for testing React components and DOM elements. [Testing Library](https://testing-library.com/)
+  - **typescript**: A typed superset of JavaScript that compiles to plain JavaScript. [TypeScript](https://www.typescriptlang.org/)
+  - **web-vitals**: A library for measuring web performance. [web-vitals](https://github.com/GoogleChrome/web-vitals)
+
 </details>
 
 To install these dependencies, run:
