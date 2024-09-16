@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -8,7 +8,6 @@ import {
   Tooltip,
   Brush,
   ResponsiveContainer,
-  Line,
 } from "recharts";
 import debounce from "lodash/debounce";
 import { DataPoint } from "../types/DataPoint";
@@ -74,23 +73,20 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     return [new Date(), new Date()];
   }, [chartData]);
 
-  const handleBrushChange = useCallback(
-    debounce((newRange: { startIndex?: number; endIndex?: number }) => {
-      if (
-        newRange.startIndex !== undefined &&
-        newRange.endIndex !== undefined
-      ) {
-        const startYear = chartData[newRange.startIndex].year;
-        const endYear = chartData[newRange.endIndex].year;
-        const newStartDate = new Date(startYear, 0, 1);
-        const newEndDate = new Date(endYear, 11, 31);
-        setStartDate(newStartDate);
-        setEndDate(newEndDate);
-        onRangeChange([newStartDate, newEndDate]);
-      }
-    }, 300),
-    [chartData, onRangeChange]
-  );
+  const handleBrushChange = debounce((newRange: { startIndex?: number; endIndex?: number }) => {
+    if (
+      newRange.startIndex !== undefined &&
+      newRange.endIndex !== undefined
+    ) {
+      const startYear = chartData[newRange.startIndex].year;
+      const endYear = chartData[newRange.endIndex].year;
+      const newStartDate = new Date(startYear, 0, 1);
+      const newEndDate = new Date(endYear, 11, 31);
+      setStartDate(newStartDate);
+      setEndDate(newEndDate);
+      onRangeChange([newStartDate, newEndDate]);
+    }
+  }, 300);
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     if (start && end) {
