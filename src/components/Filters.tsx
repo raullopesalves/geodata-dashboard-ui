@@ -100,8 +100,8 @@ const Filters: React.FC<FiltersProps> = ({
                 key={strain}
                 onClick={() => onStrainChange(strain)}
                 className={`relative px-3 py-2 rounded transition-colors ${
-                  selectedStrains.includes(strain) ? 'bg-green-600' : 'bg-gray-700'
-                } hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50`}
+                  selectedStrains.includes(strain) ? 'bg-blue-600' : 'bg-gray-700'
+                } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
               >
                 <span
                   className="text-sm truncate"
@@ -124,8 +124,8 @@ const Filters: React.FC<FiltersProps> = ({
                 key={provenance}
                 onClick={() => onProvenanceChange(provenance)}
                 className={`relative px-3 py-2 rounded transition-colors ${
-                  selectedProvenances.includes(provenance) ? 'bg-yellow-600' : 'bg-gray-700'
-                } hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50`}
+                  selectedProvenances.includes(provenance) ? 'bg-blue-600' : 'bg-gray-700'
+                } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
               >
                 <span
                   className="text-sm truncate"

@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
           {/* Timeline View */}
           <div className="h-fit bg-gray-800 overflow-hidden">
             <TimelineView 
-              data={data}
+              data={filteredData}
               dateRange={filters.dateRange} 
               onRangeChange={handleDateRangeChange} 
             />
