@@ -1,11 +1,21 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Brush, ResponsiveContainer, Line } from 'recharts';
-import debounce from 'lodash/debounce';
-import { DataPoint } from '../types/DataPoint';
-import { parseCustomDate } from '../utils/dataUtils';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { Calendar } from 'react-feather'; // Calendar icon from react-feather
+import React, { useMemo, useCallback, useState, useEffect } from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Brush,
+  ResponsiveContainer,
+  Line,
+} from "recharts";
+import debounce from "lodash/debounce";
+import { DataPoint } from "../types/DataPoint";
+import { parseCustomDate } from "../utils/dataUtils";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Calendar } from "react-feather";
 
 interface TimelineViewProps {
   data: DataPoint[];
@@ -14,22 +24,41 @@ interface TimelineViewProps {
   onRangeChange: (range: [Date, Date]) => void;
 }
 
-const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, initialDateRange, onRangeChange }) => {
-  const [groupBy, setGroupBy] = useState(10); // Default group by 50 years
+const TimelineView: React.FC<TimelineViewProps> = ({
+  data,
+  dateRange,
+  initialDateRange,
+  onRangeChange,
+}) => {
+  const [groupBy, setGroupBy] = useState(10);
   const [startDate, setStartDate] = useState(initialDateRange[0]);
   const [endDate, setEndDate] = useState(initialDateRange[1]);
 
-  // Compute chart data and range based on data prop
   const chartData = useMemo(() => {
     const yearData: { [key: number]: number } = {};
+    let maxYear = -Infinity;
+
     data.forEach((item) => {
       const date = parseCustomDate(item.timestamp);
-      const year = Math.floor(date.getFullYear() / groupBy) * groupBy;
-      if (!yearData[year]) {
-        yearData[year] = 0;
+      const year = date.getFullYear();
+      maxYear = Math.max(maxYear, year);
+      const groupedYear = Math.floor(year / groupBy) * groupBy;
+
+      if (!yearData[groupedYear]) {
+        yearData[groupedYear] = 0;
       }
-      yearData[year] += (item.H5N1 ? 1 : 0) + (item.H5N2 ? 1 : 0) + (item.H7N2 ? 1 : 0) + (item.H7N8 ? 1 : 0);
+      yearData[groupedYear] +=
+        (item.H5N1 ? 1 : 0) +
+        (item.H5N2 ? 1 : 0) +
+        (item.H7N2 ? 1 : 0) +
+        (item.H7N8 ? 1 : 0);
     });
+
+    // Ensure the last group includes the maxYear
+    const lastGroupYear = Math.ceil(maxYear / groupBy) * groupBy;
+    if (!yearData[lastGroupYear]) {
+      yearData[lastGroupYear] = 0;
+    }
 
     return Object.entries(yearData)
       .map(([year, count]) => ({ year: Number(year), count }))
@@ -45,17 +74,23 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, initialDat
     return [new Date(), new Date()];
   }, [chartData]);
 
-  const handleBrushChange = useCallback(debounce((newRange: { startIndex?: number; endIndex?: number }) => {
-    if (newRange.startIndex !== undefined && newRange.endIndex !== undefined) {
-      const startYear = chartData[newRange.startIndex].year;
-      const endYear = chartData[newRange.endIndex].year;
-      const newStartDate = new Date(startYear, 0, 1);
-      const newEndDate = new Date(endYear, 11, 31);
-      setStartDate(newStartDate);
-      setEndDate(newEndDate);
-      onRangeChange([newStartDate, newEndDate]);
-    }
-  }, 300), [chartData, onRangeChange]);
+  const handleBrushChange = useCallback(
+    debounce((newRange: { startIndex?: number; endIndex?: number }) => {
+      if (
+        newRange.startIndex !== undefined &&
+        newRange.endIndex !== undefined
+      ) {
+        const startYear = chartData[newRange.startIndex].year;
+        const endYear = chartData[newRange.endIndex].year;
+        const newStartDate = new Date(startYear, 0, 1);
+        const newEndDate = new Date(endYear, 11, 31);
+        setStartDate(newStartDate);
+        setEndDate(newEndDate);
+        onRangeChange([newStartDate, newEndDate]);
+      }
+    }, 300),
+    [chartData, onRangeChange]
+  );
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     if (start && end) {
@@ -66,20 +101,17 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, initialDat
   };
 
   useEffect(() => {
-    // Ensure startDate and endDate are within chartRange
     if (startDate < chartRange[0]) setStartDate(chartRange[0]);
     if (endDate > chartRange[1]) setEndDate(chartRange[1]);
   }, [chartRange, startDate, endDate]);
 
   useEffect(() => {
-    // Ensure endDate is not before startDate
     if (endDate && startDate && endDate < startDate) {
       setEndDate(startDate);
     }
   }, [startDate, endDate]);
 
   useEffect(() => {
-    // Ensure startDate is not after endDate
     if (endDate && startDate && startDate > endDate) {
       setStartDate(endDate);
     }
@@ -95,8 +127,20 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, initialDat
     return [];
   };
 
-  const startIndex = chartData.findIndex(d => d.year === startDate.getFullYear());
-  const endIndex = chartData.findIndex(d => d.year === endDate.getFullYear());
+  const startIndex = chartData.findIndex(
+    (d) => d.year === startDate.getFullYear()
+  );
+  const endIndex = chartData.findIndex((d) => d.year === endDate.getFullYear());
+
+  // Adjust the brush range to the actual data range
+  const brushRange = useMemo(() => {
+    if (chartData.length > 0) {
+      const minYear = chartData[0].year;
+      const maxYear = chartData[chartData.length - 1].year;
+      return [minYear, maxYear];
+    }
+    return [0, 0];
+  }, [chartData]);
 
   return (
     <div className="w-full h-80 bg-gray-800 p-4 rounded-lg">
@@ -146,29 +190,27 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, initialDat
       </div>
       <ResponsiveContainer width="100%" height={250}>
         <AreaChart
-          data={chartData}
+          data={chartData.filter(
+            (d) => d.year >= brushRange[0] && d.year <= brushRange[1]
+          )}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#555" />
-          <XAxis 
-            dataKey="year" 
-            stroke="#fff"
-            tickFormatter={formatXAxis}
-          />
+          <XAxis dataKey="year" stroke="#fff" tickFormatter={formatXAxis} />
           <YAxis stroke="#fff" />
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#333', border: 'none' }}
-            itemStyle={{ color: '#fff' }}
+          <Tooltip
+            contentStyle={{ backgroundColor: "#333", border: "none" }}
+            itemStyle={{ color: "#fff" }}
             formatter={formatTooltip}
           />
-          <Area 
-            type="monotone" 
-            dataKey="count" 
-            stroke="#1e90ff" 
+          <Area
+            type="monotone"
+            dataKey="count"
+            stroke="#1e90ff"
             fill="url(#colorCount)"
             fillOpacity={0.5}
           />
-          <Brush 
+          <Brush
             dataKey="year"
             height={30}
             stroke="#1e90ff"
@@ -177,14 +219,13 @@ const TimelineView: React.FC<TimelineViewProps> = ({ data, dateRange, initialDat
             startIndex={startIndex !== -1 ? startIndex : 0}
             endIndex={endIndex !== -1 ? endIndex : chartData.length - 1}
           >
-            <Line type="monotone" dataKey="count" stroke="#6b8e23" strokeOpacity={0.5} />
+            <defs>
+              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#1e90ff" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#1e90ff" stopOpacity={0} />
+              </linearGradient>
+            </defs>
           </Brush>
-          <defs>
-            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#1e90ff" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#1e90ff" stopOpacity={0.2}/>
-            </linearGradient>
-          </defs>
         </AreaChart>
       </ResponsiveContainer>
     </div>

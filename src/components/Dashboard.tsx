@@ -25,10 +25,7 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        console.log('Fetching data...');
         const parsedData = await parseCSV('/fake_bird_data_switzerland_v2.csv');
-        console.log('Parsed data:', parsedData.length, 'items');
-        console.log('Sample data point:', parsedData[0]);
         setData(parsedData);
         
         if (parsedData.length > 0) {
@@ -36,7 +33,6 @@ const Dashboard: React.FC = () => {
           const startDate = new Date(Math.min(...dates.map(Number)));
           const endDate = new Date(Math.max(...dates.map(Number)));
           
-          console.log('Setting initial date range:', startDate, 'to', endDate);
           if (initialDateRangeRef.current === null) {
             initialDateRangeRef.current = [startDate, endDate];
           }
@@ -80,7 +76,6 @@ const Dashboard: React.FC = () => {
   }, [data, filters.selectedSpecies, filters.selectedStrains, filters.selectedProvenances]);
 
   const handleDateRangeChange = useCallback((newRange: [Date, Date]) => {
-    console.log('Date range changed:', newRange.map(d => d.toISOString()));
     setFilters(prev => ({ ...prev, dateRange: newRange }));
   }, []);
 

@@ -34,7 +34,6 @@ export const parseCSV = async (url: string): Promise<DataPoint[]> => {
               H7N8: parseInt(String(item.H7N8)) || 0,
               timestamp: item.timestamp, // Keep the original string format
             }));
-          console.log('Sample data point:', validData[0]);
           resolve(validData);
         },
         error: (error: Error) => {
