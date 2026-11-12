@@ -25,8 +25,8 @@ const Footer: React.FC<DebugInfo> = ({
 
   return (
     <footer className="bg-gray-800 p-2 text-white">
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <span>Synthetic data, not real surveillance records</span>
           <a
             href="https://github.com/raullopesalves/geodata-dashboard-ui"

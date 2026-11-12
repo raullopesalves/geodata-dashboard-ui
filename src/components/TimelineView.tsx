@@ -142,13 +142,13 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     : "No cases for these filters.";
 
   return (
-    <div className="w-full h-80 p-4">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full p-4">
+      <div className="flex flex-wrap justify-between items-center gap-x-4 gap-y-2 mb-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-200">Timeline</h2>
           <p className="text-xs text-gray-400">Cases per year, averaged over each period</p>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center text-white whitespace-nowrap">
             <label htmlFor="timeline-group-by">Group by</label>
             <select
@@ -192,8 +192,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
         </div>
       </div>
       <p className="sr-only">{chartSummary}</p>
-      {/* 234 = 250 minus the caption line, so the brush isn't clipped by the h-80 panel */}
-      <ResponsiveContainer width="100%" height={234}>
+      <ResponsiveContainer width="100%" height={250}>
         <AreaChart
           accessibilityLayer
           data={chartData.filter(

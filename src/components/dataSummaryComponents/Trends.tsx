@@ -85,7 +85,7 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
           <option value="500">Last 500 years</option>
         </select>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4 gap-4">
         {getTrendData.map(({ variant, change, countLabel, percentLabel }) => {
           // More cases = red, fewer = green (red-300/green-400/gray-300 keep 4.5:1 on gray-700); the arrow repeats it for colour-blind users
           const tone = change > 0 ? 'text-red-300' : change < 0 ? 'text-green-400' : 'text-gray-300';

@@ -77,7 +77,7 @@ const Filters: React.FC<FiltersProps> = ({
       }}>
         <section>
           <h3 className="text-sm font-medium mb-2 text-gray-300">Bird species</h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-1 2xl:grid-cols-2 gap-2">
             {uniqueSpecies.map(species => (
               <button
                 key={species}
@@ -102,7 +102,7 @@ const Filters: React.FC<FiltersProps> = ({
 
         <section className="border-t border-gray-700 pt-3">
           <h3 className="text-sm font-medium mb-2 text-gray-300">Virus strains</h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-2">
             {uniqueStrains.map(strain => (
               <button
                 key={strain}

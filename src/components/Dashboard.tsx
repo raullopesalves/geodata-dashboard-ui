@@ -122,9 +122,9 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-900 text-white overflow-hidden">
-      <div className="flex flex-1 pb-4 pl-4 pr-4 space-x-4 overflow-hidden">
-        <aside aria-label="Filters" className="w-1/5 bg-gray-800 rounded-lg overflow-y-auto">
+    <div className="flex flex-col bg-gray-900 text-white xl:h-[calc(100vh-4rem)] xl:overflow-hidden">
+      <div className="flex flex-1 flex-col gap-4 px-4 pb-4 xl:flex-row xl:overflow-hidden">
+        <aside aria-label="Filters" className="bg-gray-800 rounded-lg xl:w-1/5 xl:overflow-y-auto">
           <Filters
             selectedSpecies={filters.selectedSpecies}
             uniqueSpecies={getUniqueSpecies(data)}
@@ -139,8 +139,8 @@ const Dashboard: React.FC = () => {
           />
         </aside>
         
-        <main className="flex-1 flex flex-col space-y-4 overflow-hidden">
-          <section aria-labelledby="map-heading" className="flex-1 bg-gray-800 rounded-lg overflow-hidden">
+        <main className="flex flex-col gap-4 min-w-0 xl:flex-1 xl:overflow-hidden">
+          <section aria-labelledby="map-heading" className="h-[60vh] min-h-80 bg-gray-800 rounded-lg overflow-hidden xl:h-auto xl:min-h-0 xl:flex-1">
             <h2 id="map-heading" className="sr-only">Map of reports</h2>
             <GraphView data={filteredData} />
           </section>
@@ -154,7 +154,7 @@ const Dashboard: React.FC = () => {
           </div>
         </main>
 
-        <aside aria-label="Summary" className="w-1/3 bg-gray-800 rounded-lg overflow-y-auto">
+        <aside aria-label="Summary" className="bg-gray-800 rounded-lg xl:w-1/3 xl:overflow-y-auto">
           <DataSummary
             filteredData={filteredData}
             dateRange={filters.dateRange}

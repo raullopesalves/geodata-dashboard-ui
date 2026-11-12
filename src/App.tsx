@@ -3,10 +3,11 @@ import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 
 const App: React.FC = () => {
+  // Below xl (1280px) the panels stack and the page scrolls; from xl up it's a fixed one-screen dashboard
   return (
-    <div className="h-screen w-screen overflow-hidden relative bg-gray-900">
+    <div className="min-h-screen relative bg-gray-900 xl:h-screen xl:overflow-hidden">
       <Navbar />
-      <div className="h-full overflow-hidden">
+      <div className="xl:h-full xl:overflow-hidden">
         <Dashboard />
       </div>
     </div>
