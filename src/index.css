@@ -15,3 +15,53 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Map: one bubble per location, ring split by strain share */
+.strain-ring {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+.strain-ring span {
+  display: grid;
+  place-items: center;
+  width: 64%;
+  height: 64%;
+  border-radius: 50%;
+  background: #111827;
+  color: #f9fafb;
+  font: 600 12px/1 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.map-legend {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(17, 24, 39, 0.85);
+  color: #e5e7eb;
+  font: 12px/1.6 system-ui, sans-serif;
+}
+.map-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+}
+.leaflet-tooltip.map-tooltip {
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  background: #111827;
+  color: #e5e7eb;
+  font: 12px/1.5 system-ui, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.leaflet-tooltip-top.map-tooltip::before {
+  border-top-color: #111827;
+}
+
+/* OSM tiles have no dark style: invert, then rotate hues back so water stays blue-ish */
+.dark-tiles {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.4);
+}
