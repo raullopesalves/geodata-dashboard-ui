@@ -20,6 +20,8 @@ import "react-datepicker/dist/react-datepicker.css";
 interface TimelineViewProps {
   data: DataPoint[];
   initialDateRange: [Date, Date];
+  // Range to start from (e.g. from a shared URL); later changes come from this component
+  dateRange: [Date, Date];
   onRangeChange: (range: [Date, Date]) => void;
 }
 
@@ -41,12 +43,13 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
 const TimelineView: React.FC<TimelineViewProps> = ({
   data,
   initialDateRange,
+  dateRange,
   onRangeChange,
 }) => {
   // 50-year buckets read as a trend; 10-year buckets were ~147 noisy spikes
   const [groupBy, setGroupBy] = useState(50);
-  const [pickedStart, setStartDate] = useState(initialDateRange[0]);
-  const [pickedEnd, setEndDate] = useState(initialDateRange[1]);
+  const [pickedStart, setStartDate] = useState(dateRange[0]);
+  const [pickedEnd, setEndDate] = useState(dateRange[1]);
 
   const chartData = useMemo(() => {
     const yearData: { [key: number]: number } = {};

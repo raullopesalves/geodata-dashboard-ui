@@ -6,6 +6,7 @@ import DataSummary from './dataSummaryComponents/DataSummary';
 import Footer from './Footer';
 import { parseCSV, filterData, getUniqueSpecies, getUniqueStrains, getUniqueProvenances, parseCustomDate } from '../utils/dataUtils';
 import { DataPoint } from '../types/DataPoint';
+import { FilterState, readFilters, writeFilters } from '../utils/urlFilters';
 
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<DataPoint[]>([]);
@@ -14,11 +15,11 @@ const Dashboard: React.FC = () => {
   
   const [initialDateRange, setInitialDateRange] = useState<[Date, Date] | null>(null);
 
-  const [filters, setFilters] = useState({
-    dateRange: [new Date(0), new Date()] as [Date, Date],
-    selectedSpecies: [] as string[],
-    selectedStrains: [] as string[],
-    selectedProvenances: [] as string[]
+  const [filters, setFilters] = useState<FilterState>({
+    dateRange: [new Date(0), new Date()],
+    selectedSpecies: [],
+    selectedStrains: [],
+    selectedProvenances: []
   });
 
   useEffect(() => {
@@ -34,10 +35,8 @@ const Dashboard: React.FC = () => {
           const endDate = new Date(Math.max(...dates.map(Number)));
           
           setInitialDateRange(prev => prev ?? [startDate, endDate]);
-          setFilters(prev => ({
-            ...prev,
-            dateRange: [startDate, endDate]
-          }));
+          // Start from the shared/bookmarked view in the URL, if any
+          setFilters(readFilters(window.location.search, [startDate, endDate]));
         } else {
           console.warn('No data found in the CSV file');
         }
@@ -51,6 +50,12 @@ const Dashboard: React.FC = () => {
 
     fetchData();
   }, []);
+
+  // Keep the address bar in sync so the current view can be shared; replaceState adds no history entries
+  useEffect(() => {
+    if (!initialDateRange) return;
+    window.history.replaceState(null, '', window.location.pathname + writeFilters(filters, initialDateRange) + window.location.hash);
+  }, [filters, initialDateRange]);
 
   const filteredData = useMemo(() => {
     return filterData(
@@ -149,6 +154,7 @@ const Dashboard: React.FC = () => {
             <TimelineView 
               data={timelineData}
               initialDateRange={initialDateRange || filters.dateRange}
+              dateRange={filters.dateRange}
               onRangeChange={handleDateRangeChange} 
             />
           </div>
