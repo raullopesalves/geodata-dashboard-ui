@@ -70,20 +70,17 @@ const Filters: React.FC<FiltersProps> = ({
               <button
                 key={species}
                 onClick={() => onSpeciesChange(species)}
+                aria-pressed={selectedSpecies.includes(species)}
                 className={`relative flex items-center p-2 rounded transition-colors ${
                   selectedSpecies.includes(species) ? 'bg-blue-600' : 'bg-gray-700'
                 } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
               >
-                <img 
-                  src={birdImages[species] || placeholderbirdImg} 
-                  alt={species} 
-                  className="w-7 h-7 object-cover rounded-full mr-2"
+                <img
+                  src={birdImages[species] || placeholderbirdImg}
+                  alt=""
+                  className="w-7 h-7 shrink-0 object-cover rounded-full mr-2"
                 />
-                <span
-                  className="text-sm truncate"
-                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                  title={species} // Tooltip for full species name
-                >
+                <span className="text-sm text-left leading-tight">
                   {species}
                 </span>
               </button>
@@ -99,6 +96,7 @@ const Filters: React.FC<FiltersProps> = ({
               <button
                 key={strain}
                 onClick={() => onStrainChange(strain)}
+                aria-pressed={selectedStrains.includes(strain)}
                 className={`relative px-3 py-2 rounded transition-colors ${
                   selectedStrains.includes(strain) ? 'bg-blue-600' : 'bg-gray-700'
                 } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
@@ -123,6 +121,7 @@ const Filters: React.FC<FiltersProps> = ({
               <button
                 key={provenance}
                 onClick={() => onProvenanceChange(provenance)}
+                aria-pressed={selectedProvenances.includes(provenance)}
                 className={`relative px-3 py-2 rounded transition-colors ${
                   selectedProvenances.includes(provenance) ? 'bg-blue-600' : 'bg-gray-700'
                 } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
