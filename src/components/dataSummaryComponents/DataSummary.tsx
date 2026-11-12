@@ -32,9 +32,10 @@ const SharePie: React.FC<{ data: Slice[] }> = ({ data }) => (
 interface DataSummaryProps {
   filteredData: DataPoint[];
   dateRange: [Date, Date];
+  selectedStrains?: string[];
 }
 
-const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) => {
+const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange, selectedStrains = [] }) => {
   const [trendPeriod, setTrendPeriod] = useState<'10' | '50' | '100' | '500'>('10');
 
   const totalCases = useMemo(() => filteredData.reduce((sum, point) =>
@@ -114,6 +115,7 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
       <Trends
         filteredData={filteredData}
         dateRange={dateRange}
+        selectedStrains={selectedStrains}
         trendPeriod={trendPeriod}
         setTrendPeriod={setTrendPeriod}
       />

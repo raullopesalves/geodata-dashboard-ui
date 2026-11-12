@@ -5,11 +5,12 @@ import { DataPoint } from '../../types/DataPoint';
 interface TrendsProps {
   filteredData: DataPoint[];
   dateRange: [Date, Date];
+  selectedStrains: string[];
   trendPeriod: '10' | '50' | '100' | '500';
   setTrendPeriod: React.Dispatch<React.SetStateAction<'10' | '50' | '100' | '500'>>;
 }
 
-const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, trendPeriod, setTrendPeriod }) => {
+const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrains, trendPeriod, setTrendPeriod }) => {
   const parseDate = (dateString: string): Date => {
     const [day, month, year] = dateString.split('.').map(Number);
     return new Date(year, month - 1, day);
@@ -49,23 +50,31 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, trendPeriod, s
         });
       });
 
-    return Object.entries(trendData).map(([variant, { current, previous }]) => {
-      const change = current - previous;
-      const percentageChange = previous !== 0 ? (change / previous) * 100 : 0;
-      return {
-        variant,
-        count: Math.abs(change),
-        percentage: Math.abs(percentageChange),
-        isIncrease: change > 0
-      };
-    });
-  }, [filteredData, dateRange, trendPeriod]);
+    return Object.entries(trendData)
+      // Strains the user filtered out would only ever show "no change"
+      .filter(([variant]) => selectedStrains.length === 0 || selectedStrains.includes(variant))
+      .map(([variant, { current, previous }]) => {
+        const change = current - previous;
+        const sign = change > 0 ? '+' : change < 0 ? '−' : '';
+        return {
+          variant,
+          change,
+          countLabel: change === 0 ? '0' : `${sign}${Math.abs(change)}`,
+          // No cases in the previous period: a percentage would be infinite
+          percentLabel: change === 0 ? '0%' : previous === 0 ? 'new' : `${sign}${Math.abs((change / previous) * 100).toFixed(1)}%`,
+        };
+      });
+  }, [filteredData, dateRange, selectedStrains, trendPeriod]);
 
   return (
     <div className="bg-gray-900 p-4 rounded-lg shadow">
-      <div className="flex items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-300 flex-1">Trends</h3>
+      <div className="flex items-start mb-4">
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-300">Trends</h3>
+          <p className="text-xs text-gray-400">Cases in the last {trendPeriod} years vs the {trendPeriod} before</p>
+        </div>
         <select
+          aria-label="Trend period"
           value={trendPeriod}
           onChange={(e) => setTrendPeriod(e.target.value as '10' | '50' | '100' | '500')}
           className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
@@ -77,24 +86,24 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, trendPeriod, s
         </select>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {getTrendData.map(({ variant, count, percentage, isIncrease }) => (
-          <div key={variant} className="bg-gray-700 p-3 rounded-md">
-            <div className="flex items-center justify-between">
-              <span className="text-white">{variant}</span>
-              <span className={`text-xs ${count === 0 ? 'text-gray-400' : isIncrease ? 'text-red-400' : 'text-green-400'}`}>
-                {count === 0 ? <Minus size={16} /> : isIncrease ? <ArrowUpRight /> : <ArrowDownRight />}
-              </span>
+        {getTrendData.map(({ variant, change, countLabel, percentLabel }) => {
+          // red-300/green-400 keep 4.5:1 on gray-700; arrows repeat the meaning for colour-blind users
+          const tone = change > 0 ? 'text-red-300' : change < 0 ? 'text-green-400' : 'text-gray-300';
+          return (
+            <div key={variant} className="bg-gray-700 p-3 rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-white">{variant}</span>
+                <span className={tone} aria-hidden="true">
+                  {change === 0 ? <Minus size={16} /> : change > 0 ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
+                </span>
+              </div>
+              <div className={`mt-1 flex items-center justify-between text-sm tabular-nums ${tone}`}>
+                <span>{countLabel}</span>
+                <span>{percentLabel}</span>
+              </div>
             </div>
-            <div className="mt-1 flex items-center justify-between">
-              <span className={`text-sm ${count === 0 ? 'text-gray-400' : isIncrease ? 'text-red-400' : 'text-green-400'}`}>
-                {count === 0 ? '-' : (isIncrease ? '+' : '-') + count}
-              </span>
-              <span className={`text-sm ${count === 0 ? 'text-gray-400' : isIncrease ? 'text-red-400' : 'text-green-400'}`}>
-                {percentage.toFixed(2)}%
-              </span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

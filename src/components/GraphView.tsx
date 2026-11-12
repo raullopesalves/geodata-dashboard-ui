@@ -6,13 +6,35 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { DataPoint } from "../types/DataPoint";
-import { STRAIN_COLORS_TRANSPARENT } from "../constants/colors";
+import { STRAIN_COLORS } from "../constants/colors";
 
 interface GraphViewProps {
   data: DataPoint[];
 }
 
-const strainColorsTransparent = STRAIN_COLORS_TRANSPARENT;
+const STRAINS = Object.keys(STRAIN_COLORS) as (keyof typeof STRAIN_COLORS)[];
+
+// Ring split by each strain's share of cases, dark centre for the label
+const strainRing = (counts: Record<string, number>, size: number, label: string, title: string): L.DivIcon => {
+  const total = STRAINS.reduce((sum, s) => sum + counts[s], 0) || 1;
+  let at = 0;
+  const stops = STRAINS.filter((s) => counts[s] > 0).map((s) => {
+    const from = at;
+    at += (counts[s] / total) * 100;
+    return `${STRAIN_COLORS[s]} ${from}% ${at}%`;
+  });
+  return L.divIcon({
+    html: `<div class="strain-ring" title="${title}" style="width:${size}px;height:${size}px;background:conic-gradient(${stops.join(",")})">${label ? `<span>${label}</span>` : ""}</div>`,
+    className: "",
+    iconSize: L.point(size, size),
+  });
+};
+
+const countStrains = (points: DataPoint[]): Record<string, number> =>
+  Object.fromEntries(STRAINS.map((s) => [s, points.reduce((sum, p) => sum + (p[s] > 0 ? 1 : 0), 0)]));
+
+const describe = (counts: Record<string, number>) =>
+  STRAINS.filter((s) => counts[s] > 0).map((s) => `${s} ${counts[s]}`).join(", ");
 
 const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
   const map = useMap();
@@ -34,88 +56,45 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
   };
 
   useEffect(() => {
-    const mcgs: { [key: string]: L.MarkerClusterGroup } = {};
-    Object.keys(strainColorsTransparent).forEach((strain) => {
-      mcgs[strain] = L.markerClusterGroup({
-        chunkedLoading: true,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        maxClusterRadius: 100,
-        iconCreateFunction: (cluster) => {
-          const childCount = cluster.getChildCount();
-          const size = Math.min(60, childCount * 3 + 20);
-          return L.divIcon({
-            html: `<div style="background-color: ${
-              strainColorsTransparent[
-                strain as keyof typeof strainColorsTransparent
-              ]
-            }; 
-                        width: ${size}px; height: ${size}px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-                        color: white; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.2);">${childCount}</div>`,
-            className: "marker-cluster-custom",
-            iconSize: L.point(size, size),
-          });
-        },
-      });
+    const pointOf = new Map<L.Layer, DataPoint>();
+    // One cluster layer for all strains, so a location is a single bubble
+    // No chunkedLoading: its deferred chunks can fire after cleanup removed the layer
+    const mcg = L.markerClusterGroup({
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      maxClusterRadius: 80,
+      iconCreateFunction: (cluster) => {
+        const reports = cluster.getAllChildMarkers().map((m) => pointOf.get(m)!);
+        const counts = countStrains(reports);
+        const size = Math.round(Math.min(56, 26 + Math.log2(reports.length) * 4));
+        return strainRing(counts, size, String(reports.length), `${reports.length} reports: ${describe(counts)}`);
+      },
     });
 
-    filteredData.forEach((point) => {
-      Object.keys(strainColorsTransparent).forEach((strain) => {
-        const strainCount = point[strain as keyof DataPoint];
-        if (typeof strainCount === "number" && strainCount > 0) {
-          const size = Math.max(10, Math.min(30, Math.sqrt(strainCount) * 3));
-          const marker = L.circleMarker([point.latitude, point.longitude], {
-            radius: size / 2,
-            fillColor:
-              strainColorsTransparent[
-                strain as keyof typeof strainColorsTransparent
-              ],
-            fillOpacity: 0.7,
-            color: "white",
-            weight: 1,
-            opacity: 0.8,
-          });
-
-          const tooltipContent = `
-            <div style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4;">
-              <strong style="font-size: 14px;">${point.species}</strong><br>
-              <strong>Date:</strong> ${formatDate(point.timestamp)}<br>
-              <strong>Provenance:</strong> ${point.provenance}<br>
-              <strong>Strains:</strong> ${strain}
-            </div>
-          `;
-
-          marker.bindTooltip(tooltipContent, {
-            direction: "top",
-            offset: L.point(0, -size / 2),
-            opacity: 0.9,
-          });
-
-          mcgs[strain].addLayer(marker);
-        }
+    const markers = filteredData.map((point) => {
+      const counts = countStrains([point]);
+      const marker = L.marker([point.latitude, point.longitude], {
+        icon: strainRing(counts, 14, "", describe(counts)),
       });
+      marker.bindTooltip(
+        `<strong>${point.species}</strong><br>${formatDate(point.timestamp)} · ${point.provenance}<br>${STRAINS.filter((s) => point[s] > 0).join(", ")}`,
+        { direction: "top", offset: L.point(0, -8), className: "map-tooltip" }
+      );
+      pointOf.set(marker, point);
+      return marker;
     });
 
-    Object.values(mcgs).forEach((mcg) => map.addLayer(mcg));
+    mcg.addLayers(markers);
+    map.addLayer(mcg);
 
     // Add legend
     const LegendControl = L.Control.extend({
       onAdd: () => {
-        const div = L.DomUtil.create("div", "info legend");
-        div.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-        div.style.padding = "10px";
-        div.style.borderRadius = "5px";
-        div.style.color = "white";
-        div.style.boxShadow = "0 0 10px rgba(0,0,0,0.2)";
-
-        Object.entries(strainColorsTransparent).forEach(([strain, color]) => {
-          div.innerHTML += `<div style="display: flex; align-items: center; margin-bottom: 5px;">
-            <div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1);"></div>
-            <span>${strain}</span>
-          </div>`;
+        const div = L.DomUtil.create("div", "map-legend");
+        STRAINS.forEach((strain) => {
+          div.innerHTML += `<div><i style="background:${STRAIN_COLORS[strain]}"></i>${strain}</div>`;
         });
-
         return div;
       },
     });
@@ -124,7 +103,7 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
     legend.addTo(map);
 
     return () => {
-      Object.values(mcgs).forEach((mcg) => map.removeLayer(mcg));
+      map.removeLayer(mcg);
       map.removeControl(legend);
     };
   }, [map, filteredData]);
@@ -145,12 +124,8 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
   const center: [number, number] = [46.8182, 8.2275]; // Approximate center of Switzerland
   const zoom = 8;
 
-  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
-
-  const fallbackUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-  const url = apiKey
-    ? `https://api.maptiler.com/maps/ch-swisstopo-lbm-dark/{z}/{x}/{y}.png?key=${apiKey}`
-    : fallbackUrl;
+  // Standard OpenStreetMap tiles (no API key), darkened in CSS via .dark-tiles
+  const url = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   return (
     <div className="h-full w-full relative" style={{ zIndex: 0 }}>
@@ -161,7 +136,8 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
       >
         <TileLayer
           url={url}
-          attribution='&copy; <a href="https://www.maptiler.com/copyright">MapTiler</a> contributors'
+          className="dark-tiles"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <MarkerClusterGroup data={data} />
       </MapContainer>

@@ -26,8 +26,6 @@ jobs:
       - run: npm ci
       # Served from https://<user>.github.io/geodata-dashboard-ui/
       - run: npm run build -- --base=/geodata-dashboard-ui/
-        env:
-          VITE_MAPTILER_API_KEY: ${{ secrets.VITE_MAPTILER_API_KEY }}
       - uses: actions/upload-pages-artifact@v4
         with:
           path: build

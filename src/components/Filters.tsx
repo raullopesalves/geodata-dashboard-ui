@@ -85,8 +85,8 @@ const Filters: React.FC<FiltersProps> = ({
                 onClick={() => onSpeciesChange(species)}
                 aria-pressed={selectedSpecies.includes(species)}
                 className={`relative flex items-center p-2 rounded transition-colors ${
-                  selectedSpecies.includes(species) ? 'bg-blue-600' : 'bg-gray-700'
-                } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
+                  selectedSpecies.includes(species) ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
+                } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
               >
                 <img
                   src={birdImages[species] || placeholderbirdImg}
@@ -111,8 +111,8 @@ const Filters: React.FC<FiltersProps> = ({
                 onClick={() => onStrainChange(strain)}
                 aria-pressed={selectedStrains.includes(strain)}
                 className={`relative px-3 py-2 rounded transition-colors ${
-                  selectedStrains.includes(strain) ? 'bg-blue-600' : 'bg-gray-700'
-                } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
+                  selectedStrains.includes(strain) ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
+                } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
               >
                 <span
                   className="text-sm truncate"
@@ -136,8 +136,8 @@ const Filters: React.FC<FiltersProps> = ({
                 onClick={() => onProvenanceChange(provenance)}
                 aria-pressed={selectedProvenances.includes(provenance)}
                 className={`relative px-3 py-2 rounded transition-colors ${
-                  selectedProvenances.includes(provenance) ? 'bg-blue-600' : 'bg-gray-700'
-                } hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
+                  selectedProvenances.includes(provenance) ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
+                } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
               >
                 <span
                   className="text-sm truncate"
