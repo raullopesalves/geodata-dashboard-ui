@@ -12,13 +12,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm test -- --watchAll=false
-        env:
-          CI: true
-      # CI=true also makes the build fail on ESLint warnings
+      - run: npm run lint
+      - run: npm test
+      # build runs tsc first, so type errors fail CI
       - run: npm run build
-        env:
-          CI: true

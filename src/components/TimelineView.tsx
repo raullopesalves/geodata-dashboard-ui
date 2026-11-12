@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -6,6 +6,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  TooltipProps,
   Brush,
   ResponsiveContainer,
 } from "recharts";
@@ -18,20 +19,30 @@ import { Calendar } from "react-feather";
 
 interface TimelineViewProps {
   data: DataPoint[];
-  dateRange: [Date, Date];
   initialDateRange: [Date, Date];
   onRangeChange: (range: [Date, Date]) => void;
 }
 
+const CustomTooltip = ({ active, payload, label, groupBy }: TooltipProps<number, string> & { groupBy: number }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip" style={{ backgroundColor: '#000', padding: '5px' }}>
+        <p className="intro">{`${label}–${label + groupBy - 1}: ${payload[0].value} cases`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const TimelineView: React.FC<TimelineViewProps> = ({
   data,
-  dateRange,
   initialDateRange,
   onRangeChange,
 }) => {
   const [groupBy, setGroupBy] = useState(10);
-  const [startDate, setStartDate] = useState(initialDateRange[0]);
-  const [endDate, setEndDate] = useState(initialDateRange[1]);
+  const [pickedStart, setStartDate] = useState(initialDateRange[0]);
+  const [pickedEnd, setEndDate] = useState(initialDateRange[1]);
 
   const chartData = useMemo(() => {
     const yearData: { [key: number]: number } = {};
@@ -74,6 +85,11 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     return initialDateRange;
   }, [chartData, initialDateRange]);
 
+  // Keep the picked years inside the chart's range, with start <= end
+  const startDate = pickedStart < chartRange[0] ? chartRange[0] : pickedStart;
+  const clampedEnd = pickedEnd > chartRange[1] ? chartRange[1] : pickedEnd;
+  const endDate = clampedEnd < startDate ? startDate : clampedEnd;
+
   const handleBrushChange = debounce((newRange: { startIndex?: number; endIndex?: number }) => {
     if (
       newRange.startIndex !== undefined &&
@@ -97,23 +113,6 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (startDate < chartRange[0]) setStartDate(chartRange[0]);
-    if (endDate > chartRange[1]) setEndDate(chartRange[1]);
-  }, [chartRange, startDate, endDate]);
-
-  useEffect(() => {
-    if (endDate && startDate && endDate < startDate) {
-      setEndDate(startDate);
-    }
-  }, [startDate, endDate]);
-
-  useEffect(() => {
-    if (endDate && startDate && startDate > endDate) {
-      setStartDate(endDate);
-    }
-  }, [endDate, startDate]);
-
   const formatXAxis = (year: number) => year.toString();
 
   const startIndex = chartData.findIndex(
@@ -130,18 +129,6 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     }
     return [0, 0];
   }, [chartData]);
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="custom-tooltip" style={{ backgroundColor: '#000', padding: '5px' }}>
-          <p className="intro">{`${label}–${label + groupBy - 1}: ${payload[0].value} cases`}</p>
-        </div>
-      );
-    }
-  
-    return null;
-  };
 
   return (
     <div className="w-full h-80 bg-gray-800 p-4 rounded-lg">
@@ -196,10 +183,16 @@ const TimelineView: React.FC<TimelineViewProps> = ({
           )}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
+          <defs>
+            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#1e90ff" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#1e90ff" stopOpacity={0} />
+            </linearGradient>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#555" />
           <XAxis dataKey="year" stroke="#fff" tickFormatter={formatXAxis} />
           <YAxis stroke="#fff" />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip groupBy={groupBy} />} />
           <Area
             type="monotone"
             dataKey="count"
@@ -216,14 +209,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             startIndex={startIndex !== -1 ? startIndex : 0}
             endIndex={endIndex !== -1 ? endIndex : chartData.length - 1}
             travellerWidth={10}
-          >
-            <defs>
-              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#1e90ff" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#1e90ff" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-          </Brush>
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>

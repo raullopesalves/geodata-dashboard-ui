@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData } from 'chart.js';
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData, TooltipItem } from 'chart.js';
 import { DataPoint } from '../../types/DataPoint';
 import Trends from './Trends';
 import RecentReports from './RecentReports';
@@ -85,9 +85,9 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
       },
       tooltip: {
         callbacks: {
-          label: (context: any) => {
+          label: (context: TooltipItem<'pie'>) => {
             const label = context.label || '';
-            const value = context.raw || 0;
+            const value = (context.raw as number) || 0;
             return `${label}: ${value.toFixed(2)}%`;
           },
         },

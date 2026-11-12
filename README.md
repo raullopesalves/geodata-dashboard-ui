@@ -19,11 +19,11 @@ I built it in September 2024 as the technical assessment for a position at ETH Z
 
 ## Stack
 
-React 18 and TypeScript (Create React App), Tailwind CSS, Leaflet with react-leaflet and marker clustering, Recharts for the timeline, Chart.js for the pie charts, and PapaParse for reading the CSV.
+React 18 and TypeScript built with Vite (originally Create React App), Tailwind CSS, Leaflet with react-leaflet and marker clustering, Recharts for the timeline, Chart.js for the pie charts, and PapaParse for reading the CSV. Tests run on Vitest.
 
 ## Running it locally
 
-You need Node.js and a free [MapTiler](https://www.maptiler.com/) API key for the base map.
+You need Node.js 22 or later and a free [MapTiler](https://www.maptiler.com/) API key for the base map.
 
 ```bash
 git clone https://github.com/raullopesalves/geodata-dashboard-ui.git
@@ -34,14 +34,15 @@ npm install
 Create a `.env` file in the project root:
 
 ```
-REACT_APP_MAPTILER_API_KEY=your_key_here
+VITE_MAPTILER_API_KEY=your_key_here
 ```
 
 Then:
 
 ```bash
-npm start        # dev server on http://localhost:3000
+npm run dev      # dev server on http://localhost:3000
 npm test         # run the tests
+npm run lint     # check the code with ESLint
 npm run build    # production build in build/
 ```
 

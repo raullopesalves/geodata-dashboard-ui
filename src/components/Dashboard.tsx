@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import GraphView from './GraphView';
 import TimelineView from './TimelineView';
 import Filters from './Filters';
@@ -12,7 +12,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   
-  const initialDateRangeRef = useRef<[Date, Date] | null>(null);
+  const [initialDateRange, setInitialDateRange] = useState<[Date, Date] | null>(null);
 
   const [filters, setFilters] = useState({
     dateRange: [new Date(0), new Date()] as [Date, Date],
@@ -33,9 +33,7 @@ const Dashboard: React.FC = () => {
           const startDate = new Date(Math.min(...dates.map(Number)));
           const endDate = new Date(Math.max(...dates.map(Number)));
           
-          if (initialDateRangeRef.current === null) {
-            initialDateRangeRef.current = [startDate, endDate];
-          }
+          setInitialDateRange(prev => prev ?? [startDate, endDate]);
           setFilters(prev => ({
             ...prev,
             dateRange: [startDate, endDate]
@@ -68,12 +66,12 @@ const Dashboard: React.FC = () => {
     // Filter data with all filters except date range
     return filterData(
       data,
-      initialDateRangeRef.current || [new Date(0), new Date()],
+      initialDateRange || [new Date(0), new Date()],
       filters.selectedSpecies,
       filters.selectedStrains,
       filters.selectedProvenances
     );
-  }, [data, filters.selectedSpecies, filters.selectedStrains, filters.selectedProvenances]);
+  }, [data, initialDateRange, filters.selectedSpecies, filters.selectedStrains, filters.selectedProvenances]);
 
   const handleDateRangeChange = useCallback((newRange: [Date, Date]) => {
     setFilters(prev => ({ ...prev, dateRange: newRange }));
@@ -144,8 +142,7 @@ const Dashboard: React.FC = () => {
           <div className="h-fit bg-gray-800 overflow-hidden">
             <TimelineView 
               data={timelineData}
-              dateRange={filters.dateRange}
-              initialDateRange={initialDateRangeRef.current || filters.dateRange}
+              initialDateRange={initialDateRange || filters.dateRange}
               onRangeChange={handleDateRangeChange} 
             />
           </div>
