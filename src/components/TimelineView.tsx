@@ -147,7 +147,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-white">Timeline</h2>
         <div className="flex items-center space-x-4">
-          <div className="flex items-center text-white">
+          <div className="flex items-center text-white whitespace-nowrap">
             <span>Group By: </span>
             <select
               className="ml-2 text-sm bg-gray-700 text-white p-1 rounded"
@@ -167,7 +167,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               onChange={(date) => handleDateChange(date as Date, endDate)}
               dateFormat="yyyy"
               showYearPicker
-              className="text-sm bg-gray-700 text-white p-1 rounded"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded"
               minDate={chartRange[0]}
               maxDate={endDate || chartRange[1]}
             />
@@ -180,7 +180,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               onChange={(date) => handleDateChange(startDate, date as Date)}
               dateFormat="yyyy"
               showYearPicker
-              className="text-sm bg-gray-700 text-white p-1 rounded"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded"
               minDate={startDate || chartRange[0]}
               maxDate={chartRange[1]}
             />
