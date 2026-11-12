@@ -27,10 +27,7 @@ const Footer: React.FC<DebugInfo> = ({
     <footer className="bg-gray-800 p-2 text-white">
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center space-x-4">
-          <span>Version: 0.1.0</span>
-          <span>|</span>
           <span>Synthetic data, not real surveillance records</span>
-          <span>|</span>
           <a
             href="https://github.com/raullopesalves/geodata-dashboard-ui"
             className="text-blue-400 hover:underline"
@@ -41,7 +38,7 @@ const Footer: React.FC<DebugInfo> = ({
         {import.meta.env.DEV && (
           <button
             onClick={handleDebugToggle}
-            className="px-2 py-1 bg-blue-600 text-xs rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="px-2 py-1 bg-blue-600 text-xs rounded hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
           >
             {showDebugInfo ? "Hide" : "Show"} Debug Info
           </button>

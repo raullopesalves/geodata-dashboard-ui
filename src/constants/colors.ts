@@ -6,9 +6,10 @@ export const STRAIN_COLORS = {
     H7N8: '#cc79a7'
 } as const;
 
+// Okabe-Ito yellow and vermillion: distinct from the four strain colours
 export const WILD_LIVESTOCK_CHART_COLORS = {
-    Wild: '#56b4e9',
-    Livestock: '#e69f00'
+    Wild: '#f0e442',
+    Livestock: '#d55e00'
 } as const;
 
 export const SCROLLBAR_COLORS = {

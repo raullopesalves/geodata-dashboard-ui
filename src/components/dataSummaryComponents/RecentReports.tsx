@@ -25,13 +25,12 @@ const RecentReports: React.FC<RecentReportsProps> = ({ filteredData }) => {
 
     return (
         <div className="bg-gray-900 p-4 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-3 text-gray-300">Recent Reports</h3>
+            <h3 className="text-lg font-semibold mb-3 text-gray-200">Recent reports</h3>
             {/* Rows are h-14 with 0.5rem gaps: 11.5rem shows exactly three whole rows */}
             <div className="h-[11.5rem] overflow-y-auto pr-2" style={{
                 scrollbarWidth: 'thin',
                 scrollbarColor: SCROLLBAR_COLORS.Colors
             }}>
-                {reportsWithStrains.length === 0 && <p className="text-sm text-gray-400">No reports match the current filters.</p>}
                 <ul className="space-y-2">
                     {reportsWithStrains
                         .sort((a, b) => parseDate(b.timestamp).getTime() - parseDate(a.timestamp).getTime())

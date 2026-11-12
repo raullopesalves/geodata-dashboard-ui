@@ -15,7 +15,7 @@ import blackbirdImg from '../assets/images/birds/blackbird.png';
 import barnswallowImg from '../assets/images/birds/barnswallow.png';
 
 import placeholderbirdImg from '../assets/images/birds/placeholderbird.png';
-import { SCROLLBAR_COLORS } from '../constants/colors';
+import { SCROLLBAR_COLORS, STRAIN_COLORS } from '../constants/colors';
 
 interface FiltersProps {
   selectedSpecies: string[];
@@ -59,38 +59,37 @@ const Filters: React.FC<FiltersProps> = ({
 }) => {
   const hasSelection = selectedSpecies.length + selectedStrains.length + selectedProvenances.length > 0;
   return (
-    <div className="bg-gray-800 p-3 rounded-lg shadow text-white h-full flex flex-col">
+    <div className="p-4 text-white h-full flex flex-col">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xl font-bold text-gray-300">Filters</h2>
-        {hasSelection && (
-          <button
-            onClick={onClearFilters}
-            className="text-sm text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
-          >
-            Clear filters
-          </button>
-        )}
+        <h2 className="text-lg font-semibold text-gray-200">Filters</h2>
+        {/* aria-disabled, not disabled: a disabled button drops keyboard focus right after it's used */}
+        <button
+          onClick={() => hasSelection && onClearFilters()}
+          aria-disabled={!hasSelection}
+          className="text-sm text-blue-400 hover:underline aria-disabled:text-gray-500 aria-disabled:no-underline aria-disabled:cursor-default rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+        >
+          Clear filters
+        </button>
       </div>
       <div className="space-y-4 flex-grow overflow-y-auto pr-2" style={{
         scrollbarWidth: 'thin',
         scrollbarColor: SCROLLBAR_COLORS.Colors
       }}>
-        {/* Bird Species */}
-        <div className="bg-gray-900 p-3 rounded-lg">
-          <h3 className="text-base font-semibold mb-2 text-gray-300">Bird Species</h3>
+        <section>
+          <h3 className="text-sm font-medium mb-2 text-gray-300">Bird species</h3>
           <div className="grid grid-cols-2 gap-2">
             {uniqueSpecies.map(species => (
               <button
                 key={species}
                 onClick={() => onSpeciesChange(species)}
                 aria-pressed={selectedSpecies.includes(species)}
-                className={`relative flex items-center p-2 rounded transition-colors ${
-                  selectedSpecies.includes(species) ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
-                } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
+                className={`flex items-center p-2 ${toggleClass(selectedSpecies.includes(species))}`}
               >
                 <img
                   src={birdImages[species] || placeholderbirdImg}
                   alt=""
+                  width={28}
+                  height={28}
                   className="w-7 h-7 shrink-0 object-cover rounded-full mr-2"
                 />
                 <span className="text-sm text-left leading-tight">
@@ -99,60 +98,53 @@ const Filters: React.FC<FiltersProps> = ({
               </button>
             ))}
           </div>
-        </div>
-        
-        {/* Virus Strains */}
-        <div className="bg-gray-900 p-3 rounded-lg">
-          <h3 className="text-base font-semibold mb-2 text-gray-300">Virus Strains</h3>
+        </section>
+
+        <section className="border-t border-gray-700 pt-3">
+          <h3 className="text-sm font-medium mb-2 text-gray-300">Virus strains</h3>
           <div className="grid grid-cols-2 gap-2">
             {uniqueStrains.map(strain => (
               <button
                 key={strain}
                 onClick={() => onStrainChange(strain)}
                 aria-pressed={selectedStrains.includes(strain)}
-                className={`relative px-3 py-2 rounded transition-colors ${
-                  selectedStrains.includes(strain) ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
-                } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
+                className={`flex items-center justify-center px-3 py-2 text-sm ${toggleClass(selectedStrains.includes(strain))}`}
               >
                 <span
-                  className="text-sm truncate"
-                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                  title={strain} // Tooltip for full strain name
-                >
-                  {strain}
-                </span>
+                  aria-hidden="true"
+                  className="w-2 h-2 rounded-full mr-2"
+                  style={{ backgroundColor: STRAIN_COLORS[strain as keyof typeof STRAIN_COLORS] }}
+                />
+                {strain}
               </button>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Provenance */}
-        <div className="bg-gray-900 p-3 rounded-lg">
-          <h3 className="text-base font-semibold mb-2 text-gray-300">Provenance</h3>
+        <section className="border-t border-gray-700 pt-3">
+          <h3 className="text-sm font-medium mb-2 text-gray-300">Provenance</h3>
           <div className="grid grid-cols-2 gap-2">
             {uniqueProvenances.map(provenance => (
               <button
                 key={provenance}
                 onClick={() => onProvenanceChange(provenance)}
                 aria-pressed={selectedProvenances.includes(provenance)}
-                className={`relative px-3 py-2 rounded transition-colors ${
-                  selectedProvenances.includes(provenance) ? 'bg-blue-600 hover:bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
-                } focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50`}
+                className={`px-3 py-2 text-sm ${toggleClass(selectedProvenances.includes(provenance))}`}
               >
-                <span
-                  className="text-sm truncate"
-                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                  title={provenance} // Tooltip for full provenance name
-                >
-                  {provenance}
-                </span>
+                {provenance}
               </button>
             ))}
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
 };
+
+// Selected toggles get a light border as well as the fill, so state isn't shown by colour alone
+const toggleClass = (selected: boolean) =>
+  `rounded border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 ${
+    selected ? 'bg-blue-600 border-blue-200 hover:bg-blue-700' : 'bg-gray-700 border-transparent hover:bg-gray-600'
+  }`;
 
 export default Filters;
