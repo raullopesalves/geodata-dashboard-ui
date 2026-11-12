@@ -147,14 +147,14 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange, sele
       ) : (
         <>
           <RecentReports filteredData={filteredData}/>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-900 p-4 rounded-lg shadow">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-gray-900 p-4 rounded-lg shadow-sm">
               <h3 className="text-lg font-semibold mb-2 text-gray-200">Provenance</h3>
               <div className="h-40">
                 <SharePie data={wildVsLivestockSlices} />
               </div>
             </div>
-            <div className="bg-gray-900 p-4 rounded-lg shadow">
+            <div className="bg-gray-900 p-4 rounded-lg shadow-sm">
               <h3 className="text-lg font-semibold mb-2 text-gray-200">Virus strains</h3>
               <div className="h-40">
                 <SharePie data={strainSlices} />

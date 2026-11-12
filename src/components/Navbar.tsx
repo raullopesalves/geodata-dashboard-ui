@@ -11,19 +11,21 @@ const Navbar: React.FC = () => {
       <header className="bg-gray-900 shadow-lg">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <img src={swissFlag} alt="" width={64} height={64} className="h-16 w-16" />
-              <h1 className="text-white font-bold text-xl">Bird Flu Cases in Switzerland</h1>
+            <div className="flex items-center gap-3 min-w-0">
+              <img src={swissFlag} alt="" width={64} height={64} className="h-10 w-10 sm:h-16 sm:w-16" />
+              <h1 className="text-white font-bold text-base sm:text-xl">Bird Flu Cases in Switzerland</h1>
               {/* Up front, so the far-future years don't read as a bug */}
-              <span className="rounded-full px-2 py-0.5 text-xs text-gray-300 ring-1 ring-gray-500">Synthetic data</span>
+              {/* Hidden on the narrowest screens only; the footer and Help still say it */}
+              <span className="hidden sm:inline rounded-full px-2 py-0.5 text-xs text-gray-300 ring-1 ring-gray-500">Synthetic data</span>
             </div>
             <div className="flex items-center space-x-4">
               <button
-                className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center hover:bg-gray-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-400"
                 onClick={() => helpRef.current?.showModal()}
               >
-                <HelpCircle size={18} className="mr-2" aria-hidden="true" />
-                Help
+                <HelpCircle size={18} className="sm:mr-2" aria-hidden="true" />
+                {/* Icon-only on phones; the text stays as the accessible name */}
+                <span className="sr-only sm:not-sr-only">Help</span>
               </button>
             </div>
           </div>
@@ -45,7 +47,7 @@ const Navbar: React.FC = () => {
           <li><strong>Timeline:</strong> drag the handles or set Start and End to limit every panel to those years.</li>
         </ul>
         <button
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+          className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
           onClick={() => helpRef.current?.close()}
         >
           Close

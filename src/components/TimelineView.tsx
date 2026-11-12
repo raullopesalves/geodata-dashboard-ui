@@ -20,6 +20,8 @@ import "react-datepicker/dist/react-datepicker.css";
 interface TimelineViewProps {
   data: DataPoint[];
   initialDateRange: [Date, Date];
+  // Range to start from (e.g. from a shared URL); later changes come from this component
+  dateRange: [Date, Date];
   onRangeChange: (range: [Date, Date]) => void;
 }
 
@@ -41,12 +43,13 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
 const TimelineView: React.FC<TimelineViewProps> = ({
   data,
   initialDateRange,
+  dateRange,
   onRangeChange,
 }) => {
   // 50-year buckets read as a trend; 10-year buckets were ~147 noisy spikes
   const [groupBy, setGroupBy] = useState(50);
-  const [pickedStart, setStartDate] = useState(initialDateRange[0]);
-  const [pickedEnd, setEndDate] = useState(initialDateRange[1]);
+  const [pickedStart, setStartDate] = useState(dateRange[0]);
+  const [pickedEnd, setEndDate] = useState(dateRange[1]);
 
   const chartData = useMemo(() => {
     const yearData: { [key: number]: number } = {};
@@ -142,18 +145,18 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     : "No cases for these filters.";
 
   return (
-    <div className="w-full h-80 p-4">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full p-4">
+      <div className="flex flex-wrap justify-between items-center gap-x-4 gap-y-2 mb-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-200">Timeline</h2>
           <p className="text-xs text-gray-400">Cases per year, averaged over each period</p>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center text-white whitespace-nowrap">
             <label htmlFor="timeline-group-by">Group by</label>
             <select
               id="timeline-group-by"
-              className="ml-2 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="ml-2 text-sm bg-gray-700 text-white p-1 rounded-sm border border-gray-500 hover:bg-gray-600 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
               value={groupBy}
               onChange={(e) => setGroupBy(Number(e.target.value))}
             >
@@ -168,10 +171,10 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             <DatePicker
               id="timeline-start"
               selected={startDate}
-              onChange={(date) => handleDateChange(date as Date, endDate)}
+              onChange={(date: Date | null) => handleDateChange(date, endDate)}
               dateFormat="yyyy"
               showYearPicker
-              className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded-sm border border-gray-500 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
               minDate={chartRange[0]}
               maxDate={endDate || chartRange[1]}
             />
@@ -181,10 +184,10 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             <DatePicker
               id="timeline-end"
               selected={endDate}
-              onChange={(date) => handleDateChange(startDate, date as Date)}
+              onChange={(date: Date | null) => handleDateChange(startDate, date)}
               dateFormat="yyyy"
               showYearPicker
-              className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded-sm border border-gray-500 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
               minDate={startDate || chartRange[0]}
               maxDate={chartRange[1]}
             />
@@ -192,8 +195,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
         </div>
       </div>
       <p className="sr-only">{chartSummary}</p>
-      {/* 234 = 250 minus the caption line, so the brush isn't clipped by the h-80 panel */}
-      <ResponsiveContainer width="100%" height={234}>
+      <ResponsiveContainer width="100%" height={250}>
         <AreaChart
           accessibilityLayer
           data={chartData.filter(

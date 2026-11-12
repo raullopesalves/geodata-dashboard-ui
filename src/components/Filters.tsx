@@ -66,18 +66,18 @@ const Filters: React.FC<FiltersProps> = ({
         <button
           onClick={() => hasSelection && onClearFilters()}
           aria-disabled={!hasSelection}
-          className="text-sm text-blue-400 hover:underline aria-disabled:text-gray-500 aria-disabled:no-underline aria-disabled:cursor-default rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+          className="text-sm text-blue-400 hover:underline aria-disabled:text-gray-500 aria-disabled:no-underline aria-disabled:cursor-default rounded-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
         >
           Clear filters
         </button>
       </div>
-      <div className="space-y-4 flex-grow overflow-y-auto pr-2" style={{
+      <div className="space-y-4 grow overflow-y-auto pr-2" style={{
         scrollbarWidth: 'thin',
         scrollbarColor: SCROLLBAR_COLORS.Colors
       }}>
         <section>
           <h3 className="text-sm font-medium mb-2 text-gray-300">Bird species</h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-1 2xl:grid-cols-2 gap-2">
             {uniqueSpecies.map(species => (
               <button
                 key={species}
@@ -102,7 +102,7 @@ const Filters: React.FC<FiltersProps> = ({
 
         <section className="border-t border-gray-700 pt-3">
           <h3 className="text-sm font-medium mb-2 text-gray-300">Virus strains</h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-2">
             {uniqueStrains.map(strain => (
               <button
                 key={strain}
@@ -143,7 +143,7 @@ const Filters: React.FC<FiltersProps> = ({
 
 // Selected toggles get a light border as well as the fill, so state isn't shown by colour alone
 const toggleClass = (selected: boolean) =>
-  `rounded border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 ${
+  `rounded border-2 transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 ${
     selected ? 'bg-blue-600 border-blue-200 hover:bg-blue-700' : 'bg-gray-700 border-transparent hover:bg-gray-600'
   }`;
 

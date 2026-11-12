@@ -67,7 +67,7 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
   }, [filteredData, dateRange, selectedStrains, trendPeriod]);
 
   return (
-    <div className="bg-gray-900 p-4 rounded-lg shadow">
+    <div className="bg-gray-900 p-4 rounded-lg shadow-sm">
       <div className="flex items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-200">Trends</h3>
@@ -77,7 +77,7 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
           aria-label="Trend period"
           value={trendPeriod}
           onChange={(e) => setTrendPeriod(e.target.value as '10' | '50' | '100' | '500')}
-          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm border border-gray-500 hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm border border-gray-500 hover:bg-gray-600 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
         >
           <option value="10">Last 10 years</option>
           <option value="50">Last 50 years</option>
@@ -85,7 +85,7 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
           <option value="500">Last 500 years</option>
         </select>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4 gap-4">
         {getTrendData.map(({ variant, change, countLabel, percentLabel }) => {
           // More cases = red, fewer = green (red-300/green-400/gray-300 keep 4.5:1 on gray-700); the arrow repeats it for colour-blind users
           const tone = change > 0 ? 'text-red-300' : change < 0 ? 'text-green-400' : 'text-gray-300';
