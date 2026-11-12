@@ -112,12 +112,13 @@ const Dashboard: React.FC = () => {
     setFilters(prev => ({ ...prev, selectedSpecies: [], selectedStrains: [], selectedProvenances: [] }));
   }, []);
 
+  // Centred in the space the dashboard will fill, so the page doesn't jump when data arrives
   if (loading) {
-    return <div role="status" className="text-white p-4">Loading data…</div>;
+    return <div role="status" className="h-[calc(100vh-4rem)] grid place-items-center text-gray-300 motion-safe:animate-pulse">Loading reports…</div>;
   }
 
   if (error) {
-    return <div role="alert" className="text-red-300 p-4">{error}</div>;
+    return <div role="alert" className="h-[calc(100vh-4rem)] grid place-items-center text-red-300">{error}</div>;
   }
 
   return (
