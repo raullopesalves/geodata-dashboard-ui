@@ -30,6 +30,7 @@ const RecentReports: React.FC<RecentReportsProps> = ({ filteredData }) => {
                 scrollbarWidth: 'thin',
                 scrollbarColor: SCROLLBAR_COLORS.Colors
             }}>
+                {reportsWithStrains.length === 0 && <p className="text-sm text-gray-400">No reports match the current filters.</p>}
                 <ul className="space-y-2">
                     {reportsWithStrains
                         .sort((a, b) => parseDate(b.timestamp).getTime() - parseDate(a.timestamp).getTime())

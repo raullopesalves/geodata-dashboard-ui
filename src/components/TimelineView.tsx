@@ -55,7 +55,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
 
     // Ensure the last group includes the maxYear
     const lastGroupYear = Math.ceil(maxYear / groupBy) * groupBy;
-    if (!yearData[lastGroupYear]) {
+    if (data.length > 0 && !yearData[lastGroupYear]) {
       yearData[lastGroupYear] = 0;
     }
 
@@ -70,8 +70,9 @@ const TimelineView: React.FC<TimelineViewProps> = ({
       const maxYear = chartData[chartData.length - 1].year;
       return [new Date(minYear, 0, 1), new Date(maxYear, 11, 31)];
     }
-    return [new Date(), new Date()];
-  }, [chartData]);
+    // No matching data: keep the full range so the year inputs aren't clamped to today
+    return initialDateRange;
+  }, [chartData, initialDateRange]);
 
   const handleBrushChange = debounce((newRange: { startIndex?: number; endIndex?: number }) => {
     if (
@@ -134,7 +135,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     if (active && payload && payload.length) {
       return (
         <div className="custom-tooltip" style={{ backgroundColor: '#000', padding: '5px' }}>
-          <p className="intro">{`Number of cases: ${payload[0].value}`}</p>
+          <p className="intro">{`${label}–${label + groupBy - 1}: ${payload[0].value} cases`}</p>
         </div>
       );
     }

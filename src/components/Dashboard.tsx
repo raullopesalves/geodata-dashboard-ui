@@ -106,6 +106,10 @@ const Dashboard: React.FC = () => {
     }));
   }, []);
 
+  const handleClearFilters = useCallback(() => {
+    setFilters(prev => ({ ...prev, selectedSpecies: [], selectedStrains: [], selectedProvenances: [] }));
+  }, []);
+
   if (loading) {
     return <div className="text-white p-4">Loading data...</div>;
   }
@@ -128,6 +132,7 @@ const Dashboard: React.FC = () => {
             onSpeciesChange={handleSpeciesChange}
             onStrainChange={handleStrainChange}
             onProvenanceChange={handleProvenanceChange}
+            onClearFilters={handleClearFilters}
           />
         </aside>
         
