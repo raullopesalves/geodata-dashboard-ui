@@ -1,6 +1,10 @@
 # Geodata Dashboard UI
 
+[![CI](https://github.com/raullopesalves/geodata-dashboard-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/raullopesalves/geodata-dashboard-ui/actions/workflows/ci.yml)
+
 An interactive dashboard for exploring bird flu reports across Switzerland on a map, a timeline and summary charts.
+
+**[Live demo](https://raullopesalves.github.io/geodata-dashboard-ui/)**
 
 I built it in September 2024 as the technical assessment for a position at ETH Zurich. The brief was to turn a geotagged CSV of bird flu reports into a dashboard someone could filter and explore.
 
@@ -19,7 +23,7 @@ I built it in September 2024 as the technical assessment for a position at ETH Z
 
 ## Stack
 
-React 18 and TypeScript built with Vite (originally Create React App), Tailwind CSS, Leaflet with react-leaflet and marker clustering, Recharts for the timeline, Chart.js for the pie charts, and PapaParse for reading the CSV. Tests run on Vitest.
+React 18 and TypeScript built with Vite (originally Create React App), Tailwind CSS, Leaflet with react-leaflet and marker clustering, Recharts for the timeline and pie charts, and PapaParse for reading the CSV. Tests run on Vitest.
 
 ## Running it locally
 
