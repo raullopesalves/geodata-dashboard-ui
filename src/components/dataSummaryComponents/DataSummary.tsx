@@ -1,12 +1,33 @@
 import React, { useState, useMemo } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, ChartData, TooltipItem } from 'chart.js';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { DataPoint } from '../../types/DataPoint';
 import Trends from './Trends';
 import RecentReports from './RecentReports';
 import { SCROLLBAR_COLORS, STRAIN_COLORS, WILD_LIVESTOCK_CHART_COLORS } from '../../constants/colors';
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement);
+type Slice = { name: string; value: number; color: string };
+
+// Percentage pie; slice borders off so a 100% slice has no seam
+const SharePie: React.FC<{ data: Slice[] }> = ({ data }) => (
+  <ResponsiveContainer width="100%" height="100%">
+    <PieChart>
+      <Pie data={data} dataKey="value" nameKey="name" stroke="none" outerRadius={52}>
+        {data.map((d) => <Cell key={d.name} fill={d.color} />)}
+      </Pie>
+      <Legend
+        verticalAlign="top"
+        iconType="square"
+        iconSize={10}
+        formatter={(value) => <span className="text-xs text-gray-300">{value}</span>}
+      />
+      <Tooltip
+        formatter={(value) => `${Number(value).toFixed(2)}%`}
+        contentStyle={{ backgroundColor: '#111827', border: 'none', borderRadius: 6 }}
+        itemStyle={{ color: '#e5e7eb' }}
+      />
+    </PieChart>
+  </ResponsiveContainer>
+);
 
 interface DataSummaryProps {
   filteredData: DataPoint[];
@@ -59,43 +80,16 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
     }, {} as Record<string, number>);
   }, [filteredData]);
 
-  const wildVsLivestockChartData: ChartData<'pie'> = {
-    labels: ['Wild', 'Livestock'],
-    datasets: [{
-      data: Object.values(wildVsLivestockData),
-      backgroundColor: [WILD_LIVESTOCK_CHART_COLORS.Wild, WILD_LIVESTOCK_CHART_COLORS.Livestock],
-    }],
-  };
+  const wildVsLivestockSlices: Slice[] = [
+    { name: 'Wild', value: wildVsLivestockData.wild, color: WILD_LIVESTOCK_CHART_COLORS.Wild },
+    { name: 'Livestock', value: wildVsLivestockData.livestock, color: WILD_LIVESTOCK_CHART_COLORS.Livestock },
+  ];
 
-  const virusVariantChartData: ChartData<'pie'> = {
-    labels: ['H5N1', 'H5N2', 'H7N2', 'H7N8'],
-    datasets: [{
-      data: Object.values(virusVariantData),
-      backgroundColor: [STRAIN_COLORS.H5N1, STRAIN_COLORS.H5N2, STRAIN_COLORS.H7N2, STRAIN_COLORS.H7N8],
-    }],
-  };
-
-  const pieChartOptions = {
-    // No slice border: a 100% slice otherwise shows a white seam
-    elements: { arc: { borderWidth: 0 } },
-    plugins: {
-      legend: {
-        position: 'top' as const,
-        labels: { color: '#d1d5db' },
-      },
-      tooltip: {
-        callbacks: {
-          label: (context: TooltipItem<'pie'>) => {
-            const label = context.label || '';
-            const value = (context.raw as number) || 0;
-            return `${label}: ${value.toFixed(2)}%`;
-          },
-        },
-      },
-    },
-    responsive: true,
-    maintainAspectRatio: false,
-  };
+  const strainSlices: Slice[] = (['H5N1', 'H5N2', 'H7N2', 'H7N8'] as const).map((strain) => ({
+    name: strain,
+    value: virusVariantData[strain],
+    color: STRAIN_COLORS[strain],
+  }));
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow grid grid-cols-1 gap-3" style={{
@@ -134,13 +128,13 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
         <div className="bg-gray-900 p-4 rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Wild vs Livestock</h3>
           <div className="h-40">
-            <Pie data={wildVsLivestockChartData} options={pieChartOptions} />
+            <SharePie data={wildVsLivestockSlices} />
           </div>
         </div>
         <div className="bg-gray-900 p-4 rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Virus Strains</h3>
           <div className="h-40">
-            <Pie data={virusVariantChartData} options={pieChartOptions} />
+            <SharePie data={strainSlices} />
           </div>
         </div>
       </div>
