@@ -49,18 +49,6 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
     return data.filter((point) => totalCases(point) > 0);
   }, [data]);
 
-  const formatDate = (dateString: string): string => {
-    const [day, month, year] = dateString.split(".");
-    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    return isNaN(date.getTime())
-      ? "Unknown date"
-      : date.toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
-  };
-
   useEffect(() => {
     const pointOf = new Map<L.Layer, DataPoint>();
     // One cluster layer for all strains, so a location is a single bubble
@@ -86,7 +74,7 @@ const MarkerClusterGroup = ({ data }: { data: DataPoint[] }) => {
         icon: strainRing(counts, 14, "", `${point.species}: ${describe(counts)}`, 24),
       });
       marker.bindTooltip(
-        `<strong>${escapeHtml(point.species)}</strong><br>${formatDate(point.timestamp)} · ${escapeHtml(point.provenance)}<br>${STRAINS.filter((s) => point[s] > 0).join(", ")}`,
+        `<strong>${escapeHtml(point.species)}</strong><br>${escapeHtml(point.timestamp)} · ${escapeHtml(point.provenance)}<br>${STRAINS.filter((s) => point[s] > 0).join(", ")}`,
         { direction: "top", offset: L.point(0, -12), className: "map-tooltip" }
       );
       pointOf.set(marker, point);
