@@ -153,7 +153,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             <label htmlFor="timeline-group-by">Group by</label>
             <select
               id="timeline-group-by"
-              className="ml-2 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="ml-2 text-sm bg-gray-700 text-white p-1 rounded-sm border border-gray-500 hover:bg-gray-600 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
               value={groupBy}
               onChange={(e) => setGroupBy(Number(e.target.value))}
             >
@@ -171,7 +171,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               onChange={(date: Date | null) => handleDateChange(date, endDate)}
               dateFormat="yyyy"
               showYearPicker
-              className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded-sm border border-gray-500 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
               minDate={chartRange[0]}
               maxDate={endDate || chartRange[1]}
             />
@@ -184,7 +184,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               onChange={(date: Date | null) => handleDateChange(startDate, date)}
               dateFormat="yyyy"
               showYearPicker
-              className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded-sm border border-gray-500 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
               minDate={startDate || chartRange[0]}
               maxDate={chartRange[1]}
             />

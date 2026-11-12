@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                className="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center hover:bg-gray-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-400"
                 onClick={() => helpRef.current?.showModal()}
               >
                 <HelpCircle size={18} className="mr-2" aria-hidden="true" />
@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
           <li><strong>Timeline:</strong> drag the handles or set Start and End to limit every panel to those years.</li>
         </ul>
         <button
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+          className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
           onClick={() => helpRef.current?.close()}
         >
           Close

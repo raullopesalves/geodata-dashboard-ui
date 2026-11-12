@@ -38,7 +38,7 @@ const Footer: React.FC<DebugInfo> = ({
         {import.meta.env.DEV && (
           <button
             onClick={handleDebugToggle}
-            className="px-2 py-1 bg-blue-600 text-xs rounded hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+            className="px-2 py-1 bg-blue-600 text-xs rounded-sm hover:bg-blue-700 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-300"
           >
             {showDebugInfo ? "Hide" : "Show"} Debug Info
           </button>
@@ -46,7 +46,7 @@ const Footer: React.FC<DebugInfo> = ({
       </div>
 
       {showDebugInfo && (
-        <div className="mt-2 bg-gray-700 p-2 text-xs rounded border border-gray-600">
+        <div className="mt-2 bg-gray-700 p-2 text-xs rounded-sm border border-gray-600">
           <p>Total Data Points: {dataLength}</p>
           <p>Filtered Data Points: {filteredDataLength}</p>
           <p>

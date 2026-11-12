@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Tailwind 4 resets buttons to the default cursor; keep v3's pointer */
+@layer base {
+  button:not(:disabled, [aria-disabled='true']),
+  [role='button'] {
+    cursor: pointer;
+  }
+}
 
 /* Native controls, scrollbars and the date picker follow the dark theme */
 html {

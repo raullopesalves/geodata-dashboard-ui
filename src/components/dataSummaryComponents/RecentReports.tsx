@@ -24,10 +24,10 @@ const RecentReports: React.FC<RecentReportsProps> = ({ filteredData }) => {
     const reportsWithStrains = filteredData.filter(report => getDetectedStrains(report).length > 0);
 
     return (
-        <div className="bg-gray-900 p-4 rounded-lg shadow">
+        <div className="bg-gray-900 p-4 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-3 text-gray-200">Recent reports</h3>
             {/* Rows are h-14 with 0.5rem gaps: 11.5rem shows exactly three whole rows */}
-            <div className="h-[11.5rem] overflow-y-auto pr-2" style={{
+            <div className="h-46 overflow-y-auto pr-2" style={{
                 scrollbarWidth: 'thin',
                 scrollbarColor: SCROLLBAR_COLORS.Colors
             }}>
