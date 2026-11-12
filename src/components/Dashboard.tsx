@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const parsedData = await parseCSV('/fake_bird_data_switzerland_v2.csv');
+        const parsedData = await parseCSV(`${import.meta.env.BASE_URL}fake_bird_data_switzerland_v2.csv`);
         setData(parsedData);
         
         if (parsedData.length > 0) {
