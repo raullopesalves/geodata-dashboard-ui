@@ -168,7 +168,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             <DatePicker
               id="timeline-start"
               selected={startDate}
-              onChange={(date) => handleDateChange(date as Date, endDate)}
+              onChange={(date: Date | null) => handleDateChange(date, endDate)}
               dateFormat="yyyy"
               showYearPicker
               className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
@@ -181,7 +181,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             <DatePicker
               id="timeline-end"
               selected={endDate}
-              onChange={(date) => handleDateChange(startDate, date as Date)}
+              onChange={(date: Date | null) => handleDateChange(startDate, date)}
               dateFormat="yyyy"
               showYearPicker
               className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
