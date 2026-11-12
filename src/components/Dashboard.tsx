@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError(`Error fetching data: ${error}`);
+        setError("Couldn't load the reports. Reload the page to try again.");
       } finally {
         setLoading(false);
       }
@@ -104,22 +104,26 @@ const Dashboard: React.FC = () => {
     }));
   }, []);
 
+  // Unfiltered totals, so the summary can show "832 of 6,967"
+  const allCases = useMemo(() => data.reduce((sum, p) => sum + p.H5N1 + p.H5N2 + p.H7N2 + p.H7N8, 0), [data]);
+  const allSpecies = useMemo(() => getUniqueSpecies(data).length, [data]);
+
   const handleClearFilters = useCallback(() => {
     setFilters(prev => ({ ...prev, selectedSpecies: [], selectedStrains: [], selectedProvenances: [] }));
   }, []);
 
   if (loading) {
-    return <div className="text-white p-4">Loading data...</div>;
+    return <div role="status" className="text-white p-4">Loading data…</div>;
   }
 
   if (error) {
-    return <div className="text-red-500 p-4">{error}</div>;
+    return <div role="alert" className="text-red-300 p-4">{error}</div>;
   }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-900 text-white overflow-hidden">
       <div className="flex flex-1 pb-4 pl-4 pr-4 space-x-4 overflow-hidden">
-        <aside className="w-1/5 bg-gray-800 overflow-y-auto">
+        <aside aria-label="Filters" className="w-1/5 bg-gray-800 rounded-lg overflow-y-auto">
           <Filters
             selectedSpecies={filters.selectedSpecies}
             uniqueSpecies={getUniqueSpecies(data)}
@@ -134,12 +138,13 @@ const Dashboard: React.FC = () => {
           />
         </aside>
         
-        <main className="flex-1 flex flex-col space-y-4 overflow-hidden w">
-          <div className="flex-1 bg-gray-800 overflow-hidden">
+        <main className="flex-1 flex flex-col space-y-4 overflow-hidden">
+          <section aria-labelledby="map-heading" className="flex-1 bg-gray-800 rounded-lg overflow-hidden">
+            <h2 id="map-heading" className="sr-only">Map of reports</h2>
             <GraphView data={filteredData} />
-          </div>
+          </section>
 
-          <div className="h-fit bg-gray-800 overflow-hidden">
+          <div className="h-fit bg-gray-800 rounded-lg overflow-hidden">
             <TimelineView 
               data={timelineData}
               initialDateRange={initialDateRange || filters.dateRange}
@@ -148,8 +153,14 @@ const Dashboard: React.FC = () => {
           </div>
         </main>
 
-        <aside className="w-1/3 bg-gray-800 overflow-y-auto">
-          <DataSummary filteredData={filteredData} dateRange={filters.dateRange} selectedStrains={filters.selectedStrains} />
+        <aside aria-label="Summary" className="w-1/3 bg-gray-800 rounded-lg overflow-y-auto">
+          <DataSummary
+            filteredData={filteredData}
+            dateRange={filters.dateRange}
+            selectedStrains={filters.selectedStrains}
+            allCases={allCases}
+            allSpecies={allSpecies}
+          />
         </aside>
       </div>
 

@@ -70,14 +70,14 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
     <div className="bg-gray-900 p-4 rounded-lg shadow">
       <div className="flex items-start mb-4">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-300">Trends</h3>
-          <p className="text-xs text-gray-400">Cases in the last {trendPeriod} years vs the {trendPeriod} before</p>
+          <h3 className="text-lg font-semibold text-gray-200">Trends</h3>
+          <p className="text-xs text-gray-400">Compared with the {trendPeriod} years before</p>
         </div>
         <select
           aria-label="Trend period"
           value={trendPeriod}
           onChange={(e) => setTrendPeriod(e.target.value as '10' | '50' | '100' | '500')}
-          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm"
+          className="bg-gray-700 text-white px-3 py-1 rounded-md text-sm border border-gray-500 hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
         >
           <option value="10">Last 10 years</option>
           <option value="50">Last 50 years</option>
@@ -87,8 +87,8 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {getTrendData.map(({ variant, change, countLabel, percentLabel }) => {
-          // red-300/green-400 keep 4.5:1 on gray-700; arrows repeat the meaning for colour-blind users
-          const tone = change > 0 ? 'text-red-300' : change < 0 ? 'text-green-400' : 'text-gray-300';
+          // Neutral text: red/green sat next to the strain colours; the arrow shows direction
+          const tone = 'text-gray-200';
           return (
             <div key={variant} className="bg-gray-700 p-3 rounded-md">
               <div className="flex items-center justify-between">

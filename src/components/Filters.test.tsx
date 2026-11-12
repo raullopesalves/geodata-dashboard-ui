@@ -41,9 +41,13 @@ test('clicking a toggle reports which value changed', () => {
   expect(onProvenanceChange).toHaveBeenCalledWith('Livestock');
 });
 
-test('Clear filters only appears once something is selected', () => {
-  renderFilters();
-  expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument();
+test('Clear filters is unavailable until something is selected, but stays focusable', () => {
+  const { onClearFilters } = renderFilters();
+  const clear = screen.getByRole('button', { name: 'Clear filters' });
+  expect(clear).toHaveAttribute('aria-disabled', 'true');
+  expect(clear).not.toBeDisabled();
+  fireEvent.click(clear);
+  expect(onClearFilters).not.toHaveBeenCalled();
 });
 
 test('Clear filters calls the clear handler', () => {

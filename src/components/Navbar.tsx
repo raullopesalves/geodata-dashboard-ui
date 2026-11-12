@@ -8,12 +8,14 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-gray-900 shadow-lg">
+      <header className="bg-gray-900 shadow-lg">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <img src={swissFlag} alt="" className="h-16 w-16" />
+              <img src={swissFlag} alt="" width={64} height={64} className="h-16 w-16" />
               <h1 className="text-white font-bold text-xl">Bird Flu Cases in Switzerland</h1>
+              {/* Up front, so the far-future years don't read as a bug */}
+              <span className="rounded-full px-2 py-0.5 text-xs text-gray-300 ring-1 ring-gray-500">Synthetic data</span>
             </div>
             <div className="flex items-center space-x-4">
               <button
@@ -26,7 +28,7 @@ const Navbar: React.FC = () => {
             </div>
           </div>
         </div>
-      </nav>
+      </header>
 
       <dialog
         ref={helpRef}
@@ -36,12 +38,11 @@ const Navbar: React.FC = () => {
         onClick={(e) => e.target === e.currentTarget && helpRef.current?.close()}
       >
         <h2 id="help-title" className="text-xl font-bold mb-4">Dashboard Help</h2>
-        <p className="mb-4">This dashboard provides a comprehensive overview of bird flu cases in Switzerland. The dataset is synthetic: locations, dates and years are generated, not real surveillance records. Here’s a breakdown of its features:</p>
-        <ul className="mb-4 list-disc pl-5">
-          <li><strong>Filter Section:</strong> Use this to filter data by 12 different bird species, 4 virus strains, and 2 types of provenance. This allows you to focus on specific aspects of the data.</li>
-          <li><strong>Map Section:</strong> Each bubble is a group of nearby reports, with its ring split by strain. Zoom in or click a bubble to see individual reports.</li>
-          <li><strong>Timeline Section:</strong> This graph lets you view trends over various time periods. You can select a custom interval to filter the data visualization according to your needs.</li>
-          <li><strong>Data Summary Section:</strong> This includes total cases reported, the date range, unique species, recent trends, recent reports, and two pie charts showing provenance and strain distribution.</li>
+        <p className="mb-4">Synthetic bird flu reports for Switzerland: locations and dates are generated, not real surveillance records.</p>
+        <ul className="mb-4 list-disc pl-5 space-y-1">
+          <li><strong>Filters:</strong> pick species, strains or provenance to narrow every panel.</li>
+          <li><strong>Map:</strong> each bubble is a group of nearby reports, with its ring split by strain. Zoom in or click a bubble to see individual reports.</li>
+          <li><strong>Timeline:</strong> drag the handles or set Start and End to limit every panel to those years.</li>
         </ul>
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"

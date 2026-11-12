@@ -13,6 +13,7 @@ import {
 import debounce from "lodash/debounce";
 import { DataPoint } from "../types/DataPoint";
 import { parseCustomDate } from "../utils/dataUtils";
+import { prefersReducedMotion } from "../utils/motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -22,11 +23,14 @@ interface TimelineViewProps {
   onRangeChange: (range: [Date, Date]) => void;
 }
 
-const CustomTooltip = ({ active, payload, label, groupBy }: TooltipProps<number, string> & { groupBy: number }) => {
+type Bucket = { year: number; from: number; to: number; count: number; perYear: number };
+
+const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
+    const b = payload[0].payload as Bucket;
     return (
-      <div className="custom-tooltip" style={{ backgroundColor: '#000', padding: '5px' }}>
-        <p className="intro">{`${label}–${label + groupBy - 1}: ${payload[0].value} cases`}</p>
+      <div className="rounded-md bg-gray-900 px-2 py-1.5 text-xs text-gray-200 shadow-lg">
+        <p>{`${b.from}–${b.to}: ${b.count.toLocaleString("en-GB")} cases (${b.perYear.toFixed(1)} a year)`}</p>
       </div>
     );
   }
@@ -39,7 +43,8 @@ const TimelineView: React.FC<TimelineViewProps> = ({
   initialDateRange,
   onRangeChange,
 }) => {
-  const [groupBy, setGroupBy] = useState(10);
+  // 50-year buckets read as a trend; 10-year buckets were ~147 noisy spikes
+  const [groupBy, setGroupBy] = useState(50);
   const [pickedStart, setStartDate] = useState(initialDateRange[0]);
   const [pickedEnd, setEndDate] = useState(initialDateRange[1]);
 
@@ -61,10 +66,18 @@ const TimelineView: React.FC<TimelineViewProps> = ({
         (item.H7N8 ? 1 : 0);
     });
 
+    // The first and last buckets only partly overlap the data (5970–7437), so plot cases per year:
+    // raw counts would show a fake dip at both edges
+    const firstYear = initialDateRange[0].getFullYear();
+    const lastYear = initialDateRange[1].getFullYear();
     return Object.entries(yearData)
-      .map(([year, count]) => ({ year: Number(year), count }))
+      .map(([year, count]): Bucket => {
+        const from = Math.max(Number(year), firstYear);
+        const to = Math.min(Number(year) + groupBy - 1, lastYear);
+        return { year: Number(year), from, to, count, perYear: count / (to - from + 1) };
+      })
       .sort((a, b) => a.year - b.year);
-  }, [data, groupBy]);
+  }, [data, groupBy, initialDateRange]);
 
   const chartRange = useMemo(() => {
     if (chartData.length > 0) {
@@ -122,16 +135,25 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     return [0, 0];
   }, [chartData]);
 
+  // Text alternative for the chart
+  const peak = chartData.reduce<Bucket | null>((max, d) => (!max || d.perYear > max.perYear ? d : max), null);
+  const chartSummary = peak
+    ? `Cases per year, averaged over ${groupBy}-year periods from ${chartData[0].from} to ${chartData[chartData.length - 1].to}. Highest: ${peak.perYear.toFixed(1)} a year in ${peak.from}–${peak.to}.`
+    : "No cases for these filters.";
+
   return (
-    <div className="w-full h-80 bg-gray-800 p-4 rounded-lg">
+    <div className="w-full h-80 p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-white">Timeline</h2>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-200">Timeline</h2>
+          <p className="text-xs text-gray-400">Cases per year, averaged over each period</p>
+        </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center text-white whitespace-nowrap">
-            <label htmlFor="timeline-group-by">Group By: </label>
+            <label htmlFor="timeline-group-by">Group by</label>
             <select
               id="timeline-group-by"
-              className="ml-2 text-sm bg-gray-700 text-white p-1 rounded"
+              className="ml-2 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               value={groupBy}
               onChange={(e) => setGroupBy(Number(e.target.value))}
             >
@@ -142,35 +164,38 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             </select>
           </div>
           <div className="flex items-center">
-            <label htmlFor="timeline-start" className="text-white mr-2">Start: </label>
+            <label htmlFor="timeline-start" className="text-white mr-2">Start</label>
             <DatePicker
               id="timeline-start"
               selected={startDate}
               onChange={(date) => handleDateChange(date as Date, endDate)}
               dateFormat="yyyy"
               showYearPicker
-              className="w-16 text-sm bg-gray-700 text-white p-1 rounded"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               minDate={chartRange[0]}
               maxDate={endDate || chartRange[1]}
             />
           </div>
           <div className="flex items-center">
-            <label htmlFor="timeline-end" className="text-white mr-2">End: </label>
+            <label htmlFor="timeline-end" className="text-white mr-2">End</label>
             <DatePicker
               id="timeline-end"
               selected={endDate}
               onChange={(date) => handleDateChange(startDate, date as Date)}
               dateFormat="yyyy"
               showYearPicker
-              className="w-16 text-sm bg-gray-700 text-white p-1 rounded"
+              className="w-16 text-sm bg-gray-700 text-white p-1 rounded border border-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               minDate={startDate || chartRange[0]}
               maxDate={chartRange[1]}
             />
           </div>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={250}>
+      <p className="sr-only">{chartSummary}</p>
+      {/* 234 = 250 minus the caption line, so the brush isn't clipped by the h-80 panel */}
+      <ResponsiveContainer width="100%" height={234}>
         <AreaChart
+          accessibilityLayer
           data={chartData.filter(
             (d) => d.year >= brushRange[0] && d.year <= brushRange[1]
           )}
@@ -182,16 +207,17 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               <stop offset="95%" stopColor="#1e90ff" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#555" />
-          <XAxis dataKey="year" stroke="#fff" tickFormatter={formatXAxis} />
-          <YAxis stroke="#fff" />
-          <Tooltip content={<CustomTooltip groupBy={groupBy} />} />
+          <CartesianGrid vertical={false} stroke="#374151" />
+          <XAxis dataKey="year" stroke="#4b5563" tick={{ fill: "#9ca3af", fontSize: 12 }} tickFormatter={formatXAxis} minTickGap={24} />
+          <YAxis stroke="#4b5563" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+          <Tooltip content={<CustomTooltip />} />
           <Area
             type="monotone"
-            dataKey="count"
+            dataKey="perYear"
             stroke="#1e90ff"
             fill="url(#colorCount)"
             fillOpacity={0.5}
+            isAnimationActive={!prefersReducedMotion}
           />
           <Brush
             dataKey="year"
@@ -202,6 +228,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             startIndex={startIndex !== -1 ? startIndex : 0}
             endIndex={endIndex !== -1 ? endIndex : chartData.length - 1}
             travellerWidth={10}
+            ariaLabel={`Selected years ${startDate.getFullYear()}–${endDate.getFullYear()}`}
           />
         </AreaChart>
       </ResponsiveContainer>
