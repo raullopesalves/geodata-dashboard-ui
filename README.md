@@ -16,8 +16,8 @@ I built it in September 2024 as the technical assessment for a position at ETH Z
 
 - **Map**: shows the reports on an OpenStreetMap base map (darkened with a CSS filter), clustered by location. Each bubble's ring is split by virus strain (H5N1, H5N2, H7N2, H7N8).
 - **Filters**: narrow the data by 12 bird species, 4 strains and provenance (wild or livestock). The map, timeline and summary update together.
-- **Timeline**: case counts over time, grouped into 10, 50, 100 or 500 year buckets. Drag the brush or pick start and end years to set the date range for the rest of the dashboard.
-- **Summary**: total cases, year range, unique species, strain trends over a chosen window, the 10 most recent reports, and pie charts of provenance and strain.
+- **Timeline**: cases per year, averaged over 10, 50, 100 or 500 year periods (50 by default). Drag the brush or pick start and end years to set the date range for the rest of the dashboard.
+- **Summary**: matching cases and species (for example "832 of 6,967"), strain trends compared with the previous period, the 10 most recent reports, and pie charts of provenance and strain.
 
 ![Filtered to H5N1 in wild birds](docs/screenshots/dashboard-filtered.png)
 
