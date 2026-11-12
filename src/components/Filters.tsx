@@ -27,6 +27,7 @@ interface FiltersProps {
   onSpeciesChange: (species: string) => void;
   onStrainChange: (strain: string) => void;
   onProvenanceChange: (provenance: string) => void;
+  onClearFilters: () => void;
 }
 
 const birdImages: { [key: string]: string } = {
@@ -54,10 +55,22 @@ const Filters: React.FC<FiltersProps> = ({
   onSpeciesChange,
   onStrainChange,
   onProvenanceChange,
+  onClearFilters,
 }) => {
+  const hasSelection = selectedSpecies.length + selectedStrains.length + selectedProvenances.length > 0;
   return (
     <div className="bg-gray-800 p-3 rounded-lg shadow text-white h-full flex flex-col">
-      <h2 className="text-xl font-bold mb-3 text-gray-300">Filters</h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-xl font-bold text-gray-300">Filters</h2>
+        {hasSelection && (
+          <button
+            onClick={onClearFilters}
+            className="text-sm text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
       <div className="space-y-4 flex-grow overflow-y-auto pr-2" style={{
         scrollbarWidth: 'thin',
         scrollbarColor: SCROLLBAR_COLORS.Colors

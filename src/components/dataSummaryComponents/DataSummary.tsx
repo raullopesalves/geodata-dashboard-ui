@@ -109,7 +109,7 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
         </div>
         <div>
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Year Range</h3>
-          <p className="text-white text-3xl font-bold">{dateRange[0].getFullYear()} - {dateRange[1].getFullYear()}</p>
+          <p className="text-white text-2xl font-bold whitespace-nowrap">{dateRange[0].getFullYear()}–{dateRange[1].getFullYear()}</p>
         </div>
         <div>
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Unique Species</h3>
@@ -127,6 +127,9 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
       <RecentReports filteredData={filteredData}/>
 
       {/* Pie Charts */}
+      {filteredData.length === 0 ? (
+        <p className="bg-gray-900 p-4 rounded-lg text-gray-300">No reports match the current filters.</p>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-gray-900 p-4 rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2 text-gray-300">Wild vs Livestock</h3>
@@ -141,6 +144,7 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 };
