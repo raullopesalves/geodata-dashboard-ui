@@ -76,9 +76,12 @@ const DataSummary: React.FC<DataSummaryProps> = ({ filteredData, dateRange }) =>
   };
 
   const pieChartOptions = {
+    // No slice border: a 100% slice otherwise shows a white seam
+    elements: { arc: { borderWidth: 0 } },
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: { color: '#d1d5db' },
       },
       tooltip: {
         callbacks: {
