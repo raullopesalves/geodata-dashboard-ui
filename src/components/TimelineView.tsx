@@ -15,7 +15,6 @@ import { DataPoint } from "../types/DataPoint";
 import { parseCustomDate } from "../utils/dataUtils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Calendar } from "react-feather";
 
 interface TimelineViewProps {
   data: DataPoint[];
@@ -46,12 +45,10 @@ const TimelineView: React.FC<TimelineViewProps> = ({
 
   const chartData = useMemo(() => {
     const yearData: { [key: number]: number } = {};
-    let maxYear = -Infinity;
 
     data.forEach((item) => {
       const date = parseCustomDate(item.timestamp);
       const year = date.getFullYear();
-      maxYear = Math.max(maxYear, year);
       const groupedYear = Math.floor(year / groupBy) * groupBy;
 
       if (!yearData[groupedYear]) {
@@ -64,12 +61,6 @@ const TimelineView: React.FC<TimelineViewProps> = ({
         (item.H7N8 ? 1 : 0);
     });
 
-    // Ensure the last group includes the maxYear
-    const lastGroupYear = Math.ceil(maxYear / groupBy) * groupBy;
-    if (data.length > 0 && !yearData[lastGroupYear]) {
-      yearData[lastGroupYear] = 0;
-    }
-
     return Object.entries(yearData)
       .map(([year, count]) => ({ year: Number(year), count }))
       .sort((a, b) => a.year - b.year);
@@ -79,11 +70,12 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     if (chartData.length > 0) {
       const minYear = chartData[0].year;
       const maxYear = chartData[chartData.length - 1].year;
-      return [new Date(minYear, 0, 1), new Date(maxYear, 11, 31)];
+      // Each point is the first year of a bucket; the range ends where the last bucket ends
+      return [new Date(minYear, 0, 1), new Date(maxYear + groupBy - 1, 11, 31)];
     }
     // No matching data: keep the full range so the year inputs aren't clamped to today
     return initialDateRange;
-  }, [chartData, initialDateRange]);
+  }, [chartData, groupBy, initialDateRange]);
 
   // Keep the picked years inside the chart's range, with start <= end
   const startDate = pickedStart < chartRange[0] ? chartRange[0] : pickedStart;
@@ -98,7 +90,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
       const startYear = chartData[newRange.startIndex].year;
       const endYear = chartData[newRange.endIndex].year;
       const newStartDate = new Date(startYear, 0, 1);
-      const newEndDate = new Date(endYear, 11, 31);
+      const newEndDate = new Date(endYear + groupBy - 1, 11, 31);
       setStartDate(newStartDate);
       setEndDate(newEndDate);
       onRangeChange([newStartDate, newEndDate]);
@@ -136,8 +128,9 @@ const TimelineView: React.FC<TimelineViewProps> = ({
         <h2 className="text-xl font-bold text-white">Timeline</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center text-white whitespace-nowrap">
-            <span>Group By: </span>
+            <label htmlFor="timeline-group-by">Group By: </label>
             <select
+              id="timeline-group-by"
               className="ml-2 text-sm bg-gray-700 text-white p-1 rounded"
               value={groupBy}
               onChange={(e) => setGroupBy(Number(e.target.value))}
@@ -149,8 +142,9 @@ const TimelineView: React.FC<TimelineViewProps> = ({
             </select>
           </div>
           <div className="flex items-center">
-            <span className="text-white mr-2">Start: </span>
+            <label htmlFor="timeline-start" className="text-white mr-2">Start: </label>
             <DatePicker
+              id="timeline-start"
               selected={startDate}
               onChange={(date) => handleDateChange(date as Date, endDate)}
               dateFormat="yyyy"
@@ -159,11 +153,11 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               minDate={chartRange[0]}
               maxDate={endDate || chartRange[1]}
             />
-            <Calendar className="text-white ml-2" size={16} />
           </div>
           <div className="flex items-center">
-            <span className="text-white mr-2">End: </span>
+            <label htmlFor="timeline-end" className="text-white mr-2">End: </label>
             <DatePicker
+              id="timeline-end"
               selected={endDate}
               onChange={(date) => handleDateChange(startDate, date as Date)}
               dateFormat="yyyy"
@@ -172,7 +166,6 @@ const TimelineView: React.FC<TimelineViewProps> = ({
               minDate={startDate || chartRange[0]}
               maxDate={chartRange[1]}
             />
-            <Calendar className="text-white ml-2" size={16} />
           </div>
         </div>
       </div>

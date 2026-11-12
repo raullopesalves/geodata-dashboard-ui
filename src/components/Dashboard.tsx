@@ -149,7 +149,7 @@ const Dashboard: React.FC = () => {
         </main>
 
         <aside className="w-1/3 bg-gray-800 overflow-y-auto">
-          <DataSummary filteredData={filteredData} dateRange={filters.dateRange} />
+          <DataSummary filteredData={filteredData} dateRange={filters.dateRange} selectedStrains={filters.selectedStrains} />
         </aside>
       </div>
 
