@@ -87,8 +87,8 @@ const Trends: React.FC<TrendsProps> = ({ filteredData, dateRange, selectedStrain
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {getTrendData.map(({ variant, change, countLabel, percentLabel }) => {
-          // Neutral text: red/green sat next to the strain colours; the arrow shows direction
-          const tone = 'text-gray-200';
+          // More cases = red, fewer = green (red-300/green-400/gray-300 keep 4.5:1 on gray-700); the arrow repeats it for colour-blind users
+          const tone = change > 0 ? 'text-red-300' : change < 0 ? 'text-green-400' : 'text-gray-300';
           return (
             <div key={variant} className="bg-gray-700 p-3 rounded-md">
               <div className="flex items-center justify-between">
