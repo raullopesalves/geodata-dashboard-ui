@@ -43,9 +43,9 @@ export const parseCSV = async (url: string): Promise<DataPoint[]> => {
     });
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Error fetching data: ${error.message}`);
+      throw new Error(`Error fetching data: ${error.message}`, { cause: error });
     } else {
-      throw new Error('An unknown error occurred while fetching data');
+      throw new Error('An unknown error occurred while fetching data', { cause: error });
     }
   }
 };

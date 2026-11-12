@@ -145,7 +145,7 @@ const GraphView: React.FC<GraphViewProps> = ({ data }) => {
   const center: [number, number] = [46.8182, 8.2275]; // Approximate center of Switzerland
   const zoom = 8;
 
-  const apiKey = process.env.REACT_APP_MAPTILER_API_KEY;
+  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
 
   const fallbackUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   const url = apiKey

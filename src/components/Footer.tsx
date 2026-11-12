@@ -38,7 +38,7 @@ const Footer: React.FC<DebugInfo> = ({
             Source on GitHub
           </a>
         </div>
-        {process.env.NODE_ENV === "development" && (
+        {import.meta.env.DEV && (
           <button
             onClick={handleDebugToggle}
             className="px-2 py-1 bg-blue-600 text-xs rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
