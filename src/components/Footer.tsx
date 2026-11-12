@@ -29,19 +29,23 @@ const Footer: React.FC<DebugInfo> = ({
         <div className="flex items-center space-x-4">
           <span>Version: 0.1.0</span>
           <span>|</span>
+          <span>Synthetic data, not real surveillance records</span>
+          <span>|</span>
           <a
-            href="mailto:support@example.com"
+            href="https://github.com/raullopesalves/geodata-dashboard-ui"
             className="text-blue-400 hover:underline"
           >
-            Contact Us
+            Source on GitHub
           </a>
         </div>
-        <button
-          onClick={handleDebugToggle}
-          className="px-2 py-1 bg-blue-600 text-xs rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          {showDebugInfo ? "Hide" : "Show"} Debug Info (Dev only)
-        </button>
+        {process.env.NODE_ENV === "development" && (
+          <button
+            onClick={handleDebugToggle}
+            className="px-2 py-1 bg-blue-600 text-xs rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            {showDebugInfo ? "Hide" : "Show"} Debug Info
+          </button>
+        )}
       </div>
 
       {showDebugInfo && (
