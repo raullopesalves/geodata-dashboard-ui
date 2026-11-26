@@ -16,14 +16,24 @@ const year = (value: string | null) => {
   return value && Number.isInteger(n) ? n : null;
 };
 
+export const dateRangeForYears = (
+  from: number | null,
+  to: number | null,
+  full: [Date, Date],
+): [Date, Date] => {
+  const startOfYear = from === null ? full[0] : new Date(from, 0, 1);
+  const endOfYear = to === null ? full[1] : new Date(to, 11, 31);
+  const start = startOfYear > full[0] ? startOfYear : full[0];
+  const end = endOfYear < full[1] ? endOfYear : full[1];
+  return start <= end ? [start, end] : full;
+};
+
 export const readFilters = (search: string, full: [Date, Date]): FilterState => {
   const params = new URLSearchParams(search);
   const from = year(params.get('from'));
   const to = year(params.get('to'));
-  const start = from !== null && new Date(from, 0, 1) > full[0] ? new Date(from, 0, 1) : full[0];
-  const end = to !== null && new Date(to, 11, 31) < full[1] ? new Date(to, 11, 31) : full[1];
   return {
-    dateRange: start <= end ? [start, end] : full,
+    dateRange: dateRangeForYears(from, to, full),
     selectedSpecies: list(params.get('species')),
     selectedStrains: list(params.get('strains')),
     selectedProvenances: list(params.get('provenance')),
