@@ -14,6 +14,7 @@ import debounce from "lodash/debounce";
 import { DataPoint } from "../types/DataPoint";
 import { parseCustomDate } from "../utils/dataUtils";
 import { prefersReducedMotion } from "../utils/motion";
+import { dateRangeForYears } from "../utils/urlFilters";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -98,26 +99,27 @@ const TimelineView: React.FC<TimelineViewProps> = ({
   const clampedEnd = pickedEnd > chartRange[1] ? chartRange[1] : pickedEnd;
   const endDate = clampedEnd < startDate ? startDate : clampedEnd;
 
+  const selectYears = (startYear: number, endYear: number) => {
+    const range = dateRangeForYears(startYear, endYear, initialDateRange);
+    setStartDate(range[0]);
+    setEndDate(range[1]);
+    onRangeChange(range);
+  };
+
   const handleBrushChange = debounce((newRange: { startIndex?: number; endIndex?: number }) => {
     if (
       newRange.startIndex !== undefined &&
       newRange.endIndex !== undefined
     ) {
       const startYear = chartData[newRange.startIndex].year;
-      const endYear = chartData[newRange.endIndex].year;
-      const newStartDate = new Date(startYear, 0, 1);
-      const newEndDate = new Date(endYear + groupBy - 1, 11, 31);
-      setStartDate(newStartDate);
-      setEndDate(newEndDate);
-      onRangeChange([newStartDate, newEndDate]);
+      const endYear = chartData[newRange.endIndex].year + groupBy - 1;
+      selectYears(startYear, endYear);
     }
   }, 300);
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     if (start && end) {
-      setStartDate(start);
-      setEndDate(end);
-      onRangeChange([start, end]);
+      selectYears(start.getFullYear(), end.getFullYear());
     }
   };
 
